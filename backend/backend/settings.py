@@ -24,9 +24,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     # 'djoser',
-    # 'api.apps.ApiConfig',
-    # 'recipes.apps.RecipesConfig',
-    # 'users.apps.UsersConfig',
+    'api.apps.ApiConfig',
+    'recepies.apps.RecepiesConfig',
+    'users.apps.UsersConfig',
     # 'drf_yasg',
     # 'django_filters',
 ]
@@ -86,9 +86,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
