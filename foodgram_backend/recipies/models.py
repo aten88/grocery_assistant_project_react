@@ -79,7 +79,7 @@ class Ingredient(models.Model):
         return f'{self.name} {self.measure_unit}'
 
 
-class Recepie(models.Model):
+class Recipie(models.Model):
     """Модель описания рецепта."""
 
     author = models.ForeignKey(
@@ -93,7 +93,7 @@ class Recepie(models.Model):
         verbose_name='Название рецепта'
     )
     picture = models.ImageField(
-        upload_to='recepies/',
+        upload_to='recipies/',
         blank=True,
         verbose_name='Картинка блюда'
     )
@@ -140,7 +140,7 @@ class IngredientInRecipie(models.Model):
     """Модель ингредиентов в отдельном рецепте."""
 
     recipie = models.ForeignKey(
-        Recepie,
+        Recipie,
         on_delete=models.CASCADE,
         related_name='ingrdients_list',
         verbose_name='Рецепт'
@@ -185,8 +185,8 @@ class TagInRecepie(models.Model):
         verbose_name='Теги',
         help_text='Выберите рецепт'
     )
-    recepie = models.ForeignKey(
-        Recepie,
+    recipie = models.ForeignKey(
+        Recipie,
         on_delete=models.CASCADE,
         verbose_name='Рецепт',
         help_text='Выберите рецепт'
@@ -198,14 +198,14 @@ class TagInRecepie(models.Model):
         verbose_name = 'Тег рецепта'
         verbose_name_plural = 'Теги рецепта'
         constraints = [
-            models.UniqueConstraint(fields=['tag', 'recepie'],
-                                    name='unique_tag_recepie')
+            models.UniqueConstraint(fields=['tag', 'recipie'],
+                                    name='unique_tag_recipie')
         ]
 
     def __str__(self) -> str:
         """Строковое представление модели."""
 
-        return f'{self.tag} {self.recepie}'
+        return f'{self.tag} {self.recipie}'
 
 
 class ShoppingList(models.Model):
@@ -218,7 +218,7 @@ class ShoppingList(models.Model):
         verbose_name='Пользователь'
     )
     recipie = models.ForeignKey(
-        Recepie,
+        Recipie,
         on_delete=models.CASCADE,
         related_name='shopping_recepie',
         verbose_name='Рецепт'
@@ -231,7 +231,7 @@ class ShoppingList(models.Model):
         verbose_name_plural = 'Списки покупок'
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'recepie'], name='unique_shoppinglist'
+                fields=['user', 'recipie'], name='unique_shoppinglist'
             )
         ]
 
@@ -284,7 +284,7 @@ class Favorite(models.Model):
         verbose_name='Рецепт'
     )
     recipie = models.ForeignKey(
-        Recepie,
+        Recipie,
         on_delete=models.CASCADE,
         related_name='favorites',
         verbose_name='Рецепт'
