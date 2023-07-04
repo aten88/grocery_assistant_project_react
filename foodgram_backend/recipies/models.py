@@ -34,8 +34,8 @@ class Tag(models.Model):
     class Meta:
         """Мета-данные тега."""
 
-        verbose_name = 'Тег',
-        verbose_name_plural = 'Теги',
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
         constraints = (
             models.UniqueConstraint(
                 fields=('name', 'color', 'slug'),
@@ -126,8 +126,8 @@ class Recipie(models.Model):
     class Meta:
         """Мета-данные модели."""
 
-        verbose_name = 'Рецепт',
-        verbose_name_plural = 'Рецепты',
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
         ordering = ('-created_at',)
 
     def __str__(self) -> str:
