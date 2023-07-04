@@ -1,3 +1,11 @@
-from django.contrib import admin
+from django.contrib.admin import register, ModelAdmin
 
-# Register your models here.
+from .models import (
+    Tag, Ingredient, Recipie, IngredientInRecipie,
+    TagInRecepie, ShoppingList, Follow, Favorite
+)
+
+
+@register(Tag)
+class TagAdmin(ModelAdmin):
+    list_display = ('pk', 'name', 'color', 'slug')
