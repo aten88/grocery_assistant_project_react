@@ -23,10 +23,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    # 'djoser',
     'api.apps.ApiConfig',
     'recipies.apps.RecipiesConfig',
     'users.apps.UsersConfig',
+    # 'djoser',
     # 'drf_yasg',
     # 'django_filters',
 ]
