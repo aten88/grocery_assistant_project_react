@@ -6,12 +6,12 @@ User = get_user_model()
 
 
 class Tag(models.Model):
-    """Модель для описания тега"""
+    """Модель тега."""
 
     name = models.CharField(
         max_length=50,
         unique=True,
-        verbose_name='Название тэга')
+        verbose_name='Название тега')
     color = models.CharField(
         'Цвет',
         max_length=7,
@@ -31,7 +31,7 @@ class Tag(models.Model):
         verbose_name='Уникальный слаг')
 
     class Meta:
-        """Мета-параметры модели"""
+        """Мета-данные модели."""
 
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
@@ -49,7 +49,7 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    """Модель для описания ингредиента"""
+    """Модель ингредиента."""
 
     name = models.CharField(
         max_length=200,
@@ -61,7 +61,7 @@ class Ingredient(models.Model):
         verbose_name='Единицы измерения')
 
     class Meta:
-        """Мета-параметры модели"""
+        """Мета-данные модели."""
 
         ordering = ('name',)
         verbose_name = 'Ингредиент'
@@ -74,7 +74,7 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
-    """Модель для описания рецепта"""
+    """Модель рецепта."""
 
     author = models.ForeignKey(
         User,
@@ -118,7 +118,7 @@ class Recipe(models.Model):
     )
 
     class Meta:
-        """Мета-параметры модели"""
+        """Мета-данные модели."""
 
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
@@ -131,7 +131,7 @@ class Recipe(models.Model):
 
 
 class IngredientInRecipe(models.Model):
-    """Модель для описания количества ингредиентов в отдельных рецептах"""
+    """Модель количества ингредиентов в отдельных рецептах."""
 
     recipe = models.ForeignKey(
         Recipe,
@@ -153,7 +153,7 @@ class IngredientInRecipe(models.Model):
     )
 
     class Meta:
-        """Мета-параметры модели"""
+        """Мета-данные модели."""
 
         verbose_name = 'Ингредиент в рецепте'
         verbose_name_plural = 'Ингредиенты в рецептах'
@@ -171,7 +171,7 @@ class IngredientInRecipe(models.Model):
 
 
 class TagInRecipe(models.Model):
-    """Создание модели тегов рецепта."""
+    """Модель тегов рецепта."""
 
     tag = models.ForeignKey(
         Tag,
@@ -186,7 +186,7 @@ class TagInRecipe(models.Model):
         help_text='Выберите рецепт')
 
     class Meta:
-        """Мета-параметры модели"""
+        """Мета-данные модели."""
 
         verbose_name = 'Тег рецепта'
         verbose_name_plural = 'Теги рецепта'
@@ -202,7 +202,7 @@ class TagInRecipe(models.Model):
 
 
 class ShoppingCart(models.Model):
-    """Модель для описания формирования покупок """
+    """Модель списка покупок."""
 
     user = models.ForeignKey(
         User,
@@ -218,7 +218,7 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
-        """Мета-параметры модели"""
+        """Мета-данные модели."""
 
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
@@ -235,7 +235,7 @@ class ShoppingCart(models.Model):
 
 
 class Follow(models.Model):
-    """ Модель для создания подписок на автора"""
+    """ Модель подписок на автора рецепта."""
 
     author = models.ForeignKey(
         User,
@@ -251,7 +251,7 @@ class Follow(models.Model):
     )
 
     class Meta:
-        """Мета-параметры модели"""
+        """Мета-данные модели."""
 
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
@@ -268,7 +268,7 @@ class Follow(models.Model):
 
 
 class Favorite(models.Model):
-    """Модель для создания избранного."""
+    """Модель избранного."""
 
     user = models.ForeignKey(
         User,
@@ -284,7 +284,7 @@ class Favorite(models.Model):
     )
 
     class Meta:
-        """Мета-параметры модели"""
+        """Мета-данные модели."""
 
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
