@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'recipes.apps.RecipesConfig',
     'users.apps.UsersConfig',
     'djoser',
+    'django_filters',
 
 ]
 
