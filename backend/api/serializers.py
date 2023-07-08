@@ -5,7 +5,6 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from djoser.serializers import UserCreateSerializer, UserSerializer
 
-
 from recipes.models import (
     Tag, Ingredient, Recipe, IngredientInRecipe,
     TagInRecipe, ShoppingCart, Follow, Favorite
