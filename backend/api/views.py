@@ -16,7 +16,7 @@ from recipes.models import (
     Tag, Ingredient, Follow, Recipe, Favorite,
     ShoppingCart, IngredientInRecipe
 )
-from .serializers import (
+from .serializer import (
     TagSerializer, IngredientSerializer, CustomUserSerializer,
     FollowSerializer, RecipeSerializer, CreateRecipeSerializer,
     AddFavoritesSerializer
