@@ -6,8 +6,6 @@ from foodgram.settings import CSV_FILES_DIR
 from recipes.models import Tag
 
 
-# python3 manage.py utils - команда для загрузки ингредиентов
-
 class Command(BaseCommand):
     """Команда для загрузки тегов в базу данных."""
 

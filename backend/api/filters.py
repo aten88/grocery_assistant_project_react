@@ -16,7 +16,7 @@ class IngredientFilter(FilterSet):
 
 
 class RecipeFilter(django_filters.FilterSet):
-    """ Фильтр для отображения избранного и списка покупок"""
+    """ Фильтр для отображения избранного и списка покупок."""
     tags = django_filters.filters.ModelMultipleChoiceFilter(
         queryset=Tag.objects.all(),
         field_name='tags__slug',

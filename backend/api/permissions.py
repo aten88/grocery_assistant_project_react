@@ -5,7 +5,7 @@ User = get_user_model()
 
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
-    """Кастомный пермишшен только для автора или только на чтение."""
+    """Кастомный пермишен только для автора или только на чтение."""
 
     def has_permission(self, request, view):
         return (request.method in permissions.SAFE_METHODS

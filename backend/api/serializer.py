@@ -72,7 +72,7 @@ class CustomCreateUserSerializer(CustomUserSerializer):
     """Сериализатор пользователя без проверки на подписку."""
 
     class Meta:
-        """Мета-параметры сериализатора"""
+        """Мета-данные сериализатора."""
 
         model = User
         fields = ('email', 'id', 'username', 'first_name',
@@ -136,14 +136,14 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class CreateIngredientsInRecipeSerializer(serializers.ModelSerializer):
-    """Сериализатор  ингредиентов в рецептах."""
+    """Сериализатор ингредиентов в рецептах."""
 
     id = serializers.IntegerField()
     amount = serializers.IntegerField()
 
     @staticmethod
     def validate_amount(value):
-        """Метод валидации количества"""
+        """Метод валидации количества."""
 
         if value < 1:
             raise serializers.ValidationError(
@@ -159,7 +159,7 @@ class CreateIngredientsInRecipeSerializer(serializers.ModelSerializer):
 
 
 class CreateRecipeSerializer(serializers.ModelSerializer):
-    """Сериализатор для создания рецептов"""
+    """Сериализатор для создания рецептов."""
 
     ingredients = CreateIngredientsInRecipeSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(
@@ -168,14 +168,14 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField(use_url=True)
 
     class Meta:
-        """Мета-параметры сериализатора"""
+        """Мета-данные сериализатора."""
 
         model = Recipe
         fields = ('ingredients', 'tags', 'name',
                   'image', 'text', 'cooking_time')
 
     def to_representation(self, instance):
-        """Метод представления модели"""
+        """Метод представления модели."""
 
         serializer = RecipeSerializer(
             instance,
@@ -186,7 +186,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         return serializer.data
 
     def validate(self, data):
-        """Метод валидации ингредиентов"""
+        """Метод валидации ингредиентов."""
 
         ingredients = self.initial_data.get('ingredients')
         lst_ingredient = []
@@ -201,7 +201,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         return data
 
     def create_ingredients(self, ingredients, recipe):
-        """Метод создания ингредиента"""
+        """Метод создания ингредиента."""
 
         for element in ingredients:
             id = element['id']
@@ -212,12 +212,12 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             )
 
     def create_tags(self, tags, recipe):
-        """Метод добавления тега"""
+        """Метод добавления тега."""
 
         recipe.tags.set(tags)
 
     def create(self, validated_data):
-        """Метод создания модели"""
+        """Метод создания модели."""
 
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
@@ -229,7 +229,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        """Метод обновления модели"""
+        """Метод обновления модели."""
 
         IngredientInRecipe.objects.filter(recipe=instance).delete()
         TagInRecipe.objects.filter(recipe=instance).delete()
@@ -289,7 +289,7 @@ class AddFavoritesSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
 
     class Meta:
-        """Мета-параметры сериализатора"""
+        """Мета-данные сериализатора."""
 
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
