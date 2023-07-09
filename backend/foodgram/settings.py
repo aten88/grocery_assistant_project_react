@@ -10,7 +10,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY', get_random_secret_key())
 
 
-DEBUG = bool(int(os.getenv('DEBUG', '0')))
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -127,7 +127,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-
     'PAGE_SIZE': 6,
 }
 
