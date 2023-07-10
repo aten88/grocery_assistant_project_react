@@ -10,7 +10,7 @@ class Tag(models.Model):
         verbose_name="Название Тега.",
         unique=True
     )
-    color_code = models.CharField(
+    color = models.CharField(
         max_length=7,
         verbose_name="HEX-код цвета.",
         unique=True
@@ -42,10 +42,12 @@ class Ingredient(models.Model):
     )
     quantity = models.DecimalField(
         max_digits=10,
-        decimal_places=2
+        decimal_places=2,
+        verbose_name="Количество ингредиента."
     )
-    measure_units = models.CharField(
-        max_length=50
+    measurement_unit = models.CharField(
+        max_length=50,
+        verbose_name="Еденица измерения."
     )
 
     class Meta:
@@ -84,7 +86,7 @@ class Recipe(models.Model):
         Ingredient,
         verbose_name="Название ингредиента."
     )
-    tag = models.ManyToManyField(
+    tags = models.ManyToManyField(
         Tag,
         verbose_name="Название тега."
     )
