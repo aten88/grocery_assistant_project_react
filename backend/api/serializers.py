@@ -8,7 +8,7 @@ class TagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tag
-        fieds = ('id', 'name', 'color', 'slug',)
+        fields = ['id', 'name', 'color', 'slug']
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -16,7 +16,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fieds = ('id', 'name', 'measurement_unit',)
+        fields = ['id', 'name', 'quantity', 'measurement_unit']
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -24,8 +24,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fieds = (
+        fields = [
             'id', 'tags', 'author', 'ingredients',
-            'is_favorited', 'is_in_shopping_cart',
-            'name', 'image', 'text', 'cooking_time',
-        )
+            'name', 'image', 'text', 'cooking_time'
+        ]
