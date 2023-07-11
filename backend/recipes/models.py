@@ -47,7 +47,7 @@ class Ingredient(models.Model):
     )
     measurement_unit = models.CharField(
         max_length=50,
-        verbose_name="Еденица измерения."
+        verbose_name="Единица измерения."
     )
 
     class Meta:
@@ -77,6 +77,7 @@ class Recipe(models.Model):
     image = models.ImageField(
         upload_to="recipes/",
         blank=True,
+        null=True,
         verbose_name="Фото рецепта."
     )
     text = models.TextField(
@@ -110,3 +111,30 @@ class Recipe(models.Model):
         """Метод строкового представления модели."""
 
         return self.name
+
+
+class Favorite(models.Model):
+    """Модель избранного."""
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Пользователь",
+        related_name="Favorites"
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name="Рецепт",
+        related_name="Favorites"
+    )
+
+    class Meta:
+        """Мета=данные модели."""
+
+        verbose_name = "Избранное"
+        verbose_name_plural = "Избранное"
+
+    def __str__(self) -> str:
+        """Метод строкового представления модели."""
+        return f'Рецепт {self.recipe} в избранном у {self.user}'
