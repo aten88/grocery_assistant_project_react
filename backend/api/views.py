@@ -1,9 +1,13 @@
+from django.contrib.auth.models import User
+
 from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 from recipes.models import Tag, Ingredient, Recipe, Favorite
 from .serializers import (
     TagSerializer, IngredientSerializer, RecipeSerializer,
-    FavoriteSerializer
+    FavoriteSerializer, UserSerializer
 )
 
 
@@ -33,3 +37,13 @@ class FavoriteViewSet(viewsets.ModelViewSet):
 
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
+
+
+class UserViewSet(viewsets.ViewSet):
+
+    permission_classes = [AllowAny]
+
+    def list(self, request):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
