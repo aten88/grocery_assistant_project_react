@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from rest_framework.authtoken.views import obtain_auth_token
+from djoser.views import TokenCreateView, TokenDestroyView
 
 from .views import (
     TagViewSet, IngredientViewSet, RecipeViewSet,
@@ -16,7 +16,11 @@ router.register(r'users', UserViewSet, basename='user')
 
 
 urlpatterns = [
-    path('auth/token/login/', obtain_auth_token, name='api_token_auth'),
+    path('auth/', include('djoser.urls')),
+    path('auth/token/login/', TokenCreateView.as_view(), name='token_create'),
+    path(
+        'auth/token/logout/', TokenDestroyView.as_view(), name='token_destroy'
+    ),
     path('users/<int:id>/', UserDetailView.as_view(), name='user-detail'),
     path('', include(router.urls)),
 ]
