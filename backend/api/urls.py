@@ -4,8 +4,9 @@ from djoser.views import TokenCreateView, TokenDestroyView
 
 from .views import (
     TagViewSet, IngredientViewSet, RecipeViewSet,
-    FavoriteViewSet, UserViewSet, UserDetailView
+    FavoriteViewSet
 )
+from users.views import UserViewSet, UserDetailView
 
 router = DefaultRouter()
 router.register(r'tags', TagViewSet)
