@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -56,7 +57,7 @@ class UserViewSet(viewsets.ViewSet):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             password = request.data.get('password')
-            serializer.save(password=password)
+            serializer.save(password=make_password(password))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
