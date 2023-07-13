@@ -6,7 +6,9 @@ from .views import (
     TagViewSet, IngredientViewSet, RecipeViewSet,
     FavoriteViewSet
 )
-from users.views import UserViewSet, UserDetailView
+from users.views import (
+    UserViewSet, UserDetailView,
+    CurrentUserViewSet, ChangePasswordViewSet)
 
 router = DefaultRouter()
 router.register(r'tags', TagViewSet)
@@ -23,5 +25,15 @@ urlpatterns = [
         'auth/token/logout/', TokenDestroyView.as_view(), name='token_destroy'
     ),
     path('users/<int:id>/', UserDetailView.as_view(), name='user-detail'),
+    path(
+        'users/me/',
+        CurrentUserViewSet.as_view({'get': 'retrieve'}),
+        name='current-user'
+    ),
+    path(
+        'users/set_password/',
+        ChangePasswordViewSet.as_view({'post': 'set_password'}),
+        name='set-password'
+    ),
     path('', include(router.urls)),
 ]
