@@ -16,7 +16,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = ['id', 'name', 'quantity', 'measurement_unit']
+        fields = ['id', 'name', 'measurement_unit']
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -28,11 +28,3 @@ class RecipeSerializer(serializers.ModelSerializer):
             'id', 'tags', 'author', 'ingredients',
             'name', 'image', 'text', 'cooking_time'
         ]
-
-
-class FavoriteSerializer(serializers.ModelSerializer):
-    """Сериализатор модели Favorite."""
-
-    class Meta:
-        model = Favorite
-        fields = ['user', 'recipe']

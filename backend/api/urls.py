@@ -3,8 +3,8 @@ from rest_framework.routers import DefaultRouter
 from djoser.views import TokenCreateView, TokenDestroyView
 
 from .views import (
-    TagViewSet, IngredientViewSet, RecipeViewSet,
-    FavoriteViewSet
+    TagViewSet, IngredientViewSet, RecipeViewSetList,
+    AddFavoriteView
 )
 from users.views import (
     UserViewSet, UserDetailView,
@@ -13,8 +13,7 @@ from users.views import (
 router = DefaultRouter()
 router.register(r'tags', TagViewSet)
 router.register(r'ingredients', IngredientViewSet)
-router.register(r'recipes', RecipeViewSet)
-router.register(r'favorite', FavoriteViewSet)
+router.register(r'recipes', RecipeViewSetList)
 router.register(r'users', UserViewSet, basename='user')
 
 
@@ -35,5 +34,6 @@ urlpatterns = [
         ChangePasswordViewSet.as_view({'post': 'set_password'}),
         name='set-password'
     ),
+    path('recipes/<int:id>/favorite/', AddFavoriteView.as_view()),
     path('', include(router.urls)),
 ]
