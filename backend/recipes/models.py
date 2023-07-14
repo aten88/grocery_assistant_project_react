@@ -138,3 +138,32 @@ class Favorite(models.Model):
     def __str__(self) -> str:
         """Метод строкового представления модели."""
         return f'Рецепт {self.recipe} в избранном у {self.user}'
+
+
+class Subscription(models.Model):
+    """Модель подписки на автора."""
+
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Автор рецепта',
+        related_name='follow'
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Подписчик',
+        related_name='follower'
+    )
+
+    class Meta:
+        """Мета данные модели."""
+
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+
+    def __str__(self) -> str:
+        """Метод строкового представления модели."""
+        return (
+            f'Пользователь {self.user} подписан на {self.author}'
+        )

@@ -4,9 +4,9 @@ from djoser.views import TokenCreateView, TokenDestroyView
 
 from .views import (
     TagViewSet, IngredientViewSet, RecipeViewSetList,
-    AddFavoriteView
+    AddFavoriteView, UserSubscriptionListAPIView
 )
-from users.views import (
+from .views import (
     UserViewSet, UserDetailView,
     CurrentUserViewSet, ChangePasswordViewSet)
 
@@ -22,6 +22,10 @@ urlpatterns = [
     path('auth/token/login/', TokenCreateView.as_view(), name='token_create'),
     path(
         'auth/token/logout/', TokenDestroyView.as_view(), name='token_destroy'
+    ),
+    path(
+        'users/subscriptions/', UserSubscriptionListAPIView.as_view(),
+        name='user-subscriptions'
     ),
     path('users/<int:id>/', UserDetailView.as_view(), name='user-detail'),
     path(
