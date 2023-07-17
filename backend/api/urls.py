@@ -7,8 +7,8 @@ from .views import (
     AddFavoriteView, UserSubscriptionListAPIView
 )
 from .views import (
-    UserViewSet, UserDetailView,
-    CurrentUserViewSet, ChangePasswordViewSet)
+    UserViewSet, UserDetailView, CurrentUserViewSet,
+    ChangePasswordViewSet, AddToShoppingCart)
 
 router = DefaultRouter()
 router.register(r'tags', TagViewSet)
@@ -39,5 +39,6 @@ urlpatterns = [
         name='set-password'
     ),
     path('recipes/<int:id>/favorite/', AddFavoriteView.as_view()),
+    path('recipes/<int:id>/shopping_cart/', AddToShoppingCart.as_view()),
     path('', include(router.urls)),
 ]

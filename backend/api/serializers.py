@@ -1,7 +1,10 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from recipes.models import Tag, Ingredient, Recipe, Subscription
+from recipes.models import (
+    Tag, Ingredient,
+    Recipe, Subscription, ShoppingCart
+)
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -60,3 +63,11 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = ['author', 'user']
+
+
+class ShoppingCartSerializer(serializers.ModelSerializer):
+    """Сериализатор для списка покупок."""
+
+    class Meta:
+        model = ShoppingCart
+        fields = ['user', 'recipe']

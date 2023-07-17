@@ -9,11 +9,11 @@ from rest_framework.pagination import PageNumberPagination
 
 from recipes.models import (
     Tag, Ingredient, Recipe,
-    Favorite, Subscription
+    Favorite, Subscription, ShoppingCart
 )
 from .serializers import (
-    TagSerializer, IngredientSerializer,
-    RecipeSerializer, SubscriptionSerialiazer, FavoriteRecipeSerializer
+    TagSerializer, IngredientSerializer, RecipeSerializer,
+    SubscriptionSerialiazer, FavoriteRecipeSerializer, ShoppingCartSerializer
 )
 from .serializers import UserSerializer
 
@@ -88,6 +88,49 @@ class AddFavoriteView(APIView):
         )
 
 
+class AddToShoppingCart(APIView):
+    """Вьюсет для добавления рецепта в список покупок."""
+
+    def post(self, request, id):
+        """Метод для добавления рецепта в список покупок."""
+        try:
+            recipe = Recipe.objects.get(id=id)
+            user = request.user
+        except Recipe.DoesNotExist:
+            return Response(
+                'Рецепт не найден.',
+                status=status.HTTP_404_NOT_FOUND
+            )
+        if ShoppingCart.objects.filter(user=request.user, recipe=recipe):
+            return Response(
+                'Рецепт уже добавлен в список покупок.',
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        ShoppingCart(user=user, recipe=recipe).save()
+        serializer = ShoppingCartSerializer(
+            ShoppingCart(user=user, recipe=recipe)
+        )
+        serializer = FavoriteRecipeSerializer(recipe)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED
+        )
+
+    def delete(self, request, id):
+        """Метод удаления рецепта из списка покупок."""
+        try:
+            ShoppingCart.objects.get(user=request.user, recipe_id=id).delete()
+        except ShoppingCart.DoesNotExist:
+            return Response(
+                'Рецепт не добавлен в список покупок.',
+                status=status.HTTP_404_NOT_FOUND
+            )
+        return Response(
+            'Рецепт удален из списка покупок.',
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+
 class UserViewSet(viewsets.ViewSet):
     """Вьюсет модели User."""
 
@@ -110,7 +153,7 @@ class UserViewSet(viewsets.ViewSet):
 
 
 class UserDetailView(RetrieveAPIView):
-    """Представление для User по id."""
+    """Вьюсет для User по id."""
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -160,7 +203,7 @@ class ChangePasswordViewSet(viewsets.ViewSet):
 
 
 class UserSubscriptionListAPIView(ListAPIView):
-    """Представление для получения списка подписок."""
+    """Вьюсет для получения списка подписок."""
 
     serializer_class = SubscriptionSerialiazer
     permission_classes = [IsAuthenticated]
