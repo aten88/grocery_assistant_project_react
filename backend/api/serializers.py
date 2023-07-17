@@ -21,7 +21,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    """Сериализатор модели Tag."""
+    """Сериализатор модели Recipe."""
 
     class Meta:
         model = Recipe
@@ -29,6 +29,14 @@ class RecipeSerializer(serializers.ModelSerializer):
             'id', 'tags', 'author', 'ingredients',
             'name', 'image', 'text', 'cooking_time'
         ]
+
+
+class FavoriteRecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор для отображения избранного рецепта."""
+
+    class Meta:
+        model = Recipe
+        fields = ['id', 'name', 'image', 'cooking_time']
 
 
 class UserSerializer(serializers.ModelSerializer):

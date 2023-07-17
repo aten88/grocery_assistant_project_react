@@ -167,3 +167,30 @@ class Subscription(models.Model):
         return (
             f'Пользователь {self.user} подписан на {self.author}'
         )
+
+
+class ShoppingCart(models.Model):
+    """Модель списка покупок."""
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='shopping_user',
+        verbose_name='Пользователь'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='shopping_recipe',
+        verbose_name='Рецепт'
+    )
+
+    class Meta:
+        """Мета данные модели."""
+
+        verbose_name = 'Список покупок'
+        verbose_name_plural = 'Списки покупок'
+
+    def __str__(self) -> str:
+        """Метод строкового представления модели."""
+        return f'{self.recipe} добавлен в список покупок {self.user}'

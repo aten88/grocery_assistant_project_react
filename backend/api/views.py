@@ -1,10 +1,11 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView, ListAPIView
+from rest_framework.pagination import PageNumberPagination
 
 from recipes.models import (
     Tag, Ingredient, Recipe,
@@ -12,7 +13,7 @@ from recipes.models import (
 )
 from .serializers import (
     TagSerializer, IngredientSerializer,
-    RecipeSerializer, SubscriptionSerialiazer
+    RecipeSerializer, SubscriptionSerialiazer, FavoriteRecipeSerializer
 )
 from .serializers import UserSerializer
 
@@ -31,6 +32,8 @@ class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = [AllowAny]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name']
 
 
 class RecipeViewSetList(viewsets.ModelViewSet):
@@ -53,14 +56,19 @@ class AddFavoriteView(APIView):
                 'Рецепт не найден',
                 status=status.HTTP_404_NOT_FOUND
             )
+        if recipe.author == request.user:
+            return Response(
+                'Вы не можете добавить свой рецепт в избранное.'
+            )
         if Favorite.objects.filter(user=request.user, recipe=recipe):
             return Response(
                 'Рецепт уже в избранном',
                 status=status.HTTP_400_BAD_REQUEST
             )
         Favorite(user=request.user, recipe=recipe).save()
+        serializer = FavoriteRecipeSerializer(recipe)
         return Response(
-            'Рецепт успешно добавлен в избранное',
+            serializer.data,
             status=status.HTTP_201_CREATED
         )
 
@@ -155,6 +163,8 @@ class UserSubscriptionListAPIView(ListAPIView):
     """Представление для получения списка подписок."""
 
     serializer_class = SubscriptionSerialiazer
+    permission_classes = [IsAuthenticated]
+    pagination_class = PageNumberPagination
 
     def get_queryset(self):
         """Метод получения подписок юзера."""

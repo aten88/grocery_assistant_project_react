@@ -1,6 +1,9 @@
 from django.contrib import admin
 
-from .models import Tag, Ingredient, Recipe, Favorite, Subscription
+from .models import (
+    Tag, Ingredient, Recipe, Favorite,
+    Subscription, ShoppingCart
+)
 
 
 @admin.register(Tag)
@@ -25,4 +28,9 @@ class FavoriteAdmin(admin.ModelAdmin):
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
     pass
