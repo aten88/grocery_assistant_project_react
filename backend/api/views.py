@@ -16,6 +16,7 @@ from .serializers import (
     SubscriptionSerialiazer, FavoriteRecipeSerializer, ShoppingCartSerializer
 )
 from .serializers import UserSerializer
+from .pagination import CustomPagination
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -24,6 +25,7 @@ class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = [AllowAny]
+    pagination_class = None
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
@@ -32,6 +34,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = [AllowAny]
+    pagination_class = None
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
 
@@ -75,8 +78,7 @@ class AddFavoriteView(APIView):
     def delete(self, request, id):
         """Метод удаления рецепта из избранного"""
         try:
-            favorite = Favorite.objects.get(user=request.user, recipe_id=id)
-            favorite.delete()
+            Favorite.objects.get(user=request.user, recipe_id=id).delete()
         except Favorite.DoesNotExist:
             return Response(
                 'Рецепт не найден в избранном',
@@ -131,16 +133,12 @@ class AddToShoppingCart(APIView):
         )
 
 
-class UserViewSet(viewsets.ViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     """Вьюсет модели User."""
-
+    queryset = User.objects.order_by('-date_joined').all()
+    serializer_class = UserSerializer
     permission_classes = [AllowAny]
-
-    def list(self, request):
-        """Метод отображения списка пользователей."""
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
+    pagination_class = CustomPagination
 
     def create(self, request):
         """Метод создания нового пользователя."""
