@@ -13,9 +13,9 @@ from recipes.models import (
 )
 from .serializers import (
     TagSerializer, IngredientSerializer, RecipeSerializer,
-    SubscriptionSerialiazer, FavoriteRecipeSerializer, ShoppingCartSerializer
+    SubscriptionSerialiazer, FavoriteRecipeSerializer, ShoppingCartSerializer,
+    UserSerializer, RecipeSerializerDetail
 )
-from .serializers import UserSerializer
 from .pagination import CustomPagination
 
 
@@ -45,6 +45,15 @@ class RecipeViewSetList(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     permission_classes = [AllowAny]
+
+
+class RecipeViewSetDetail(viewsets.ModelViewSet):
+    """Вьюсет модели Recipe по ID."""
+
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializerDetail
+    permission_classes = [IsAuthenticated]
+    pagination_class = None
 
 
 class AddFavoriteView(APIView):
@@ -153,6 +162,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class UserDetailView(RetrieveAPIView):
     """Вьюсет для User по id."""
 
+    permission_classes = [AllowAny]
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'id'

@@ -4,11 +4,10 @@ from djoser.views import TokenCreateView, TokenDestroyView
 
 from .views import (
     TagViewSet, IngredientViewSet, RecipeViewSetList,
-    AddFavoriteView, UserSubscriptionListAPIView
-)
-from .views import (
+    RecipeViewSetDetail, AddFavoriteView, UserSubscriptionListAPIView,
     UserViewSet, UserDetailView, CurrentUserViewSet,
-    ChangePasswordViewSet, AddToShoppingCart)
+    ChangePasswordViewSet, AddToShoppingCart,
+)
 
 router = DefaultRouter()
 router.register(r'tags', TagViewSet)
@@ -38,6 +37,7 @@ urlpatterns = [
         ChangePasswordViewSet.as_view({'post': 'set_password'}),
         name='set-password'
     ),
+    path('recipes/<int:id>/', RecipeViewSetDetail.as_view({'get': 'list'})),
     path('recipes/<int:id>/favorite/', AddFavoriteView.as_view()),
     path('recipes/<int:id>/shopping_cart/', AddToShoppingCart.as_view()),
     path('', include(router.urls)),

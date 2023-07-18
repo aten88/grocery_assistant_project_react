@@ -29,6 +29,17 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = [
+            'ingredients', 'tags', 'image',
+            'name', 'text', 'cooking_time'
+        ]
+
+
+class RecipeSerializerDetail(serializers.ModelSerializer):
+    """Сериализатор модели Recipe по ID."""
+
+    class Meta:
+        model = Recipe
+        fields = [
             'id', 'tags', 'author', 'ingredients',
             'name', 'image', 'text', 'cooking_time'
         ]
@@ -45,9 +56,9 @@ class FavoriteRecipeSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор модели User."""
 
-    email = serializers.EmailField(required=True)
-    first_name = serializers.CharField(required=True)
-    last_name = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True, max_length=254)
+    first_name = serializers.CharField(required=True, max_length=150)
+    last_name = serializers.CharField(required=True, max_length=150)
 
     class Meta:
         model = User
