@@ -70,10 +70,30 @@ class UserSerializer(serializers.ModelSerializer):
 
 class SubscriptionSerialiazer(serializers.ModelSerializer):
     """Сериализатор модели подписок."""
+    author = serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
+    recipe = serializers.SerializerMethodField()
 
     class Meta:
         model = Subscription
-        fields = ['author', 'user']
+        fields = ['author', 'user', 'recipe']
+
+    def get_author(self, obj):
+        """Метод получения имени автора."""
+        return obj.author.username
+
+    def get_user(self, obj):
+        """Метод получения имени юзера."""
+        return obj.user.username
+
+    def get_recipe(self, obj):
+        """Метод получения рецептов автора по подписке."""
+
+        author = obj.author
+        recipes = Recipe.objects.filter(author=author)
+        serializer = RecipeSerializer(recipes, many=True)
+
+        return serializer.data
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
