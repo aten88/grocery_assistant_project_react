@@ -168,17 +168,14 @@ class UserDetailView(RetrieveAPIView):
     lookup_field = 'id'
 
 
-class CurrentUserViewSet(viewsets.ViewSet):
-    """Вьюсет для получения текущего пользователя."""
-
+class CurrentUserViewSet(RetrieveAPIView):
+    """API view для получения данных текущего пользователя."""
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
-    def retrieve(self, request):
-        """Метод получения данных текущего пользователя."""
-
-        user = request.user
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
+    def get_object(self):
+        """Метод для получения текущего пользователя."""
+        return self.request.user
 
 
 class ChangePasswordViewSet(viewsets.ViewSet):

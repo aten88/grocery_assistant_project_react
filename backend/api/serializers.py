@@ -26,6 +26,9 @@ class IngredientSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     """Сериализатор модели Recipe."""
 
+    ingredients = IngredientSerializer(many=True)
+    tags = TagSerializer(many=True)
+
     class Meta:
         model = Recipe
         fields = [
@@ -36,6 +39,9 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class RecipeSerializerDetail(serializers.ModelSerializer):
     """Сериализатор модели Recipe по ID."""
+
+    ingredients = IngredientSerializer(many=True)
+    tags = TagSerializer(many=True)
 
     class Meta:
         model = Recipe
@@ -59,32 +65,39 @@ class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True, max_length=254)
     first_name = serializers.CharField(required=True, max_length=150)
     last_name = serializers.CharField(required=True, max_length=150)
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = [
             'email', 'id', 'username',
-            'first_name', 'last_name'
+            'first_name', 'last_name',
+            'is_subscribed'
         ]
+
+    def get_is_subscribed(self, obj):
+        """Метод проверки подписки юзера."""
+
+        request_user = self.context.get('request').user
+        if request_user.is_authenticated:
+            return Subscription.objects.filter(
+                author=obj.id, user=request_user
+            ).exists()
+        return False
 
 
 class SubscriptionSerialiazer(serializers.ModelSerializer):
     """Сериализатор модели подписок."""
     author = serializers.SerializerMethodField()
-    user = serializers.SerializerMethodField()
     recipe = serializers.SerializerMethodField()
 
     class Meta:
         model = Subscription
-        fields = ['author', 'user', 'recipe']
+        fields = ['author', 'recipe']
 
     def get_author(self, obj):
         """Метод получения имени автора."""
         return obj.author.username
-
-    def get_user(self, obj):
-        """Метод получения имени юзера."""
-        return obj.user.username
 
     def get_recipe(self, obj):
         """Метод получения рецептов автора по подписке."""

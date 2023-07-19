@@ -29,7 +29,7 @@ urlpatterns = [
     path('users/<int:id>/', UserDetailView.as_view(), name='user-detail'),
     path(
         'users/me/',
-        CurrentUserViewSet.as_view({'get': 'retrieve'}),
+        CurrentUserViewSet.as_view(),
         name='current-user'
     ),
     path(
