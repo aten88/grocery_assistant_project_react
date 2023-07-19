@@ -65,6 +65,21 @@ class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True, max_length=254)
     first_name = serializers.CharField(required=True, max_length=150)
     last_name = serializers.CharField(required=True, max_length=150)
+
+    class Meta:
+        model = User
+        fields = [
+            'email', 'id', 'username',
+            'first_name', 'last_name',
+        ]
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    """Сериализатор модели User по id."""
+
+    email = serializers.EmailField(required=True, max_length=254)
+    first_name = serializers.CharField(required=True, max_length=150)
+    last_name = serializers.CharField(required=True, max_length=150)
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:

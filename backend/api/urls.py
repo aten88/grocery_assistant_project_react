@@ -37,6 +37,11 @@ urlpatterns = [
         ChangePasswordViewSet.as_view({'post': 'set_password'}),
         name='set-password'
     ),
+    path(
+        'users/<int:id>/subscribe/',
+        UserSubscriptionListAPIView.as_view(),
+        name='subscribe-unsubscribe'
+    ),
     path('recipes/<int:id>/', RecipeViewSetDetail.as_view({'get': 'list'})),
     path('recipes/<int:id>/favorite/', AddFavoriteView.as_view()),
     path('recipes/<int:id>/shopping_cart/', AddToShoppingCart.as_view()),

@@ -4,7 +4,9 @@ from rest_framework import viewsets, status, filters
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.generics import RetrieveAPIView, ListAPIView
+from rest_framework.generics import (
+    RetrieveAPIView, ListAPIView, get_object_or_404
+)
 from rest_framework.pagination import PageNumberPagination
 
 from recipes.models import (
@@ -14,7 +16,7 @@ from recipes.models import (
 from .serializers import (
     TagSerializer, IngredientSerializer, RecipeSerializer,
     SubscriptionSerialiazer, FavoriteRecipeSerializer, ShoppingCartSerializer,
-    UserSerializer, RecipeSerializerDetail
+    UserSerializer, UserDetailSerializer, RecipeSerializerDetail
 )
 from .pagination import CustomPagination
 
@@ -164,7 +166,7 @@ class UserDetailView(RetrieveAPIView):
 
     permission_classes = [AllowAny]
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserDetailSerializer
     lookup_field = 'id'
 
 
@@ -217,3 +219,42 @@ class UserSubscriptionListAPIView(ListAPIView):
     def get_queryset(self):
         """Метод получения подписок юзера."""
         return Subscription.objects.filter(user=self.request.user)
+
+    def post(self, request, id):
+        """Метод создания подписки по id."""
+
+        user_to_subscribe = get_object_or_404(User, id=id)
+
+        if user_to_subscribe == request.user:
+            return Response(
+                'Вы не можете подписаться на себя.',
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if Subscription.objects.filter(
+            user=request.user, author=user_to_subscribe
+        ).exists():
+            return Response(
+                'Вы уже подписаны на автора',
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        Subscription.objects.create(
+            user=request.user, author=user_to_subscribe
+        )
+        user_data = UserSerializer(request.user).data
+        user_data['is_subscribed'] = True
+        return Response(user_data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, id):
+        """Метод удаления подписки по id."""
+        user_to_unsubscribe = get_object_or_404(User, id=id)
+
+        if get_object_or_404(
+            Subscription, user=request.user, author=user_to_unsubscribe
+        ):
+            get_object_or_404(
+                Subscription, user=request.user, author=user_to_unsubscribe
+            ).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            'Подписки не существует', status=status.HTTP_204_NO_CONTENT
+        )
