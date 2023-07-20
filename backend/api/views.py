@@ -172,7 +172,7 @@ class UserDetailView(RetrieveAPIView):
 
 class CurrentUserViewSet(RetrieveAPIView):
     """API view для получения данных текущего пользователя."""
-    serializer_class = UserSerializer
+    serializer_class = UserDetailSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
@@ -258,7 +258,9 @@ class UserSubscriptionListAPIView(ListAPIView):
             get_object_or_404(
                 Subscription, user=request.user, author=user_to_unsubscribe
             ).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(
+                'Вы отписались от автора.', status=status.HTTP_204_NO_CONTENT
+            )
         return Response(
             'Подписки не существует', status=status.HTTP_204_NO_CONTENT
         )
