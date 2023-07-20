@@ -240,9 +240,13 @@ class UserSubscriptionListAPIView(ListAPIView):
         Subscription.objects.create(
             user=request.user, author=user_to_subscribe
         )
-        user_data = UserSerializer(request.user).data
-        user_data['is_subscribed'] = True
-        return Response(user_data, status=status.HTTP_201_CREATED)
+        author_data = UserSerializer(user_to_subscribe).data
+        recipes = Recipe.objects.filter(author=user_to_subscribe)
+        recipe_data = RecipeSerializer(recipes, many=True).data
+        author_data['is_subscribed'] = True
+        author_data['recipes'] = recipe_data
+        author_data['recipes_count'] = len(recipe_data)
+        return Response(author_data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, id):
         """Метод удаления подписки по id."""
