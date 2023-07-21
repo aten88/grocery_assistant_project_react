@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from recipes.models import (
     Tag, Ingredient,
-    Recipe, Subscription, ShoppingCart
+    Recipe, Subscription, ShoppingCart,
 )
 
 
@@ -34,20 +34,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = [
             'ingredients', 'tags', 'image',
             'name', 'text', 'cooking_time'
-        ]
-
-
-class RecipeSerializerDetail(serializers.ModelSerializer):
-    """Сериализатор модели Recipe по ID."""
-
-    ingredients = IngredientSerializer(many=True)
-    tags = TagSerializer(many=True)
-
-    class Meta:
-        model = Recipe
-        fields = [
-            'id', 'tags', 'author', 'ingredients',
-            'name', 'image', 'text', 'cooking_time'
         ]
 
 
@@ -130,3 +116,21 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = ['user', 'recipe']
+
+
+class RecipeSerializerDetail(serializers.ModelSerializer):
+    """Сериализатор модели Recipe по ID."""
+
+    ingredients = IngredientSerializer(many=True)
+    tags = TagSerializer(many=True)
+    author = UserDetailSerializer()
+    # is_favorited = FavoriteRecipeSerializer()
+    # is_in_shopping_cart = ShoppingCartSerializer()
+
+    class Meta:
+        model = Recipe
+        fields = [
+            'id', 'tags', 'author', 'ingredients',
+            # 'is_favorited', 'is_in_shopping_cart',
+            'name', 'image', 'text', 'cooking_time'
+        ]
