@@ -72,7 +72,8 @@ class Recipe(models.Model):
     )
     name = models.CharField(
         max_length=200,
-        verbose_name="Название рецепта."
+        verbose_name="Название рецепта.",
+        unique=True
     )
     image = models.ImageField(
         upload_to="recipes/",
