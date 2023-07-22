@@ -2,7 +2,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from rest_framework import viewsets, status, filters
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import (
+    AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
+)
 from rest_framework.response import Response
 from rest_framework.generics import (
     RetrieveAPIView, ListAPIView, get_object_or_404
@@ -15,10 +17,12 @@ from recipes.models import (
 )
 from .serializers import (
     TagSerializer, IngredientSerializer, RecipeSerializer,
-    SubscriptionSerialiazer, FavoriteRecipeSerializer, ShoppingCartSerializer,
-    UserSerializer, UserDetailSerializer, RecipeSerializerDetail
+    SubscriptionSerialiazer, FavoriteRecipeSerializer,
+    ShoppingCartSerializer, UserSerializer, UserDetailSerializer,
+    RecipeSerializerDetail,
 )
 from .pagination import CustomPagination
+from .permissions import IsAuthorOrReadOnly
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -46,7 +50,20 @@ class RecipeViewSetList(viewsets.ModelViewSet):
 
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(author=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    # def update(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     serializer = self.get_serializer(instance, data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+    #     return Response(serializer.data)
 
 
 class RecipeViewSetDetail(viewsets.ModelViewSet):
@@ -54,7 +71,7 @@ class RecipeViewSetDetail(viewsets.ModelViewSet):
 
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializerDetail
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthorOrReadOnly]
     lookup_field = 'id'
     pagination_class = None
 
@@ -62,6 +79,20 @@ class RecipeViewSetDetail(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = RecipeSerializer(
+            instance, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AddFavoriteView(APIView):

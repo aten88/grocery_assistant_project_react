@@ -26,8 +26,12 @@ class IngredientSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     """Сериализатор модели Recipe."""
 
-    ingredients = IngredientSerializer(many=True)
-    tags = TagSerializer(many=True)
+    ingredients = serializers.PrimaryKeyRelatedField(
+        queryset=Ingredient.objects.all(), many=True
+    )
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=Tag.objects.all(), many=True
+    )
 
     class Meta:
         model = Recipe
