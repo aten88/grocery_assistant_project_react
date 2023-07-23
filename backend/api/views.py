@@ -209,8 +209,9 @@ class DownloadShoppingCart(viewsets.ViewSet):
         )
 
         response = HttpResponse(content_type='text/plain')
-        response['Content-Disposition'] = '''attachment;\n
-        filename="shopping_list.txt"'''
+        response['Content-Disposition'] = (
+            'attachment; filename="shopping_list.txt"'
+        )
         response.write(file_content)
         return response
 
