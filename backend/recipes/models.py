@@ -51,7 +51,7 @@ class Ingredient(models.Model):
     )
 
     class Meta:
-        """Мета данные модели."""
+        "Мета-данные модели."
 
         verbose_name = "Ингредиент"
         verbose_name_plural = "Ингредиенты"
@@ -76,9 +76,10 @@ class Recipe(models.Model):
         unique=True
     )
     image = models.ImageField(
-        upload_to="recipes/",
+        upload_to="recipes/images/",
         blank=True,
         null=True,
+        default=None,
         verbose_name="Фото рецепта."
     )
     text = models.TextField(
@@ -102,7 +103,7 @@ class Recipe(models.Model):
     )
 
     class Meta:
-        """Мета данные модели."""
+        "Мета-данные модели."
 
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
@@ -131,7 +132,7 @@ class Favorite(models.Model):
     )
 
     class Meta:
-        """Мета=данные модели."""
+        "Мета-данные модели."
 
         verbose_name = "Избранное"
         verbose_name_plural = "Избранное"
@@ -158,7 +159,7 @@ class Subscription(models.Model):
     )
 
     class Meta:
-        """Мета данные модели."""
+        "Мета-данные модели."
 
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
@@ -187,7 +188,7 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
-        """Мета данные модели."""
+        "Мета-данные модели."
 
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'

@@ -1,3 +1,6 @@
+import base64
+
+from django.core.files.base import ContentFile
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
@@ -5,6 +8,19 @@ from recipes.models import (
     Tag, Ingredient,
     Recipe, Subscription, ShoppingCart, Favorite
 )
+
+
+class Base64ImageField(serializers.ImageField):
+    """Кастомное поле для кодирования изображений."""
+
+    def to_internal_value(self, data):
+        """Метод декодирования картинки."""
+        if isinstance(data, str) and data.startswith('data:image'):
+            format, imgstr = data.split(';base64,')
+            ext = format.split('/')[-1]
+            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+
+        return super().to_internal_value(data)
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -32,6 +48,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True
     )
+    image = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Recipe

@@ -51,19 +51,14 @@ class RecipeViewSetList(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    pagination_class = CustomPagination
 
     def create(self, request, *args, **kwargs):
+        """Метод создания рецепта."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(author=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    # def update(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     serializer = self.get_serializer(instance, data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-    #     return Response(serializer.data)
 
 
 class RecipeViewSetDetail(viewsets.ModelViewSet):
@@ -76,11 +71,13 @@ class RecipeViewSetDetail(viewsets.ModelViewSet):
     pagination_class = None
 
     def retrieve(self, request, *args, **kwargs):
+        """Метод получения данных из рецепта по id."""
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
+        """Метод обновления данных в рецептe по id."""
         instance = self.get_object()
         serializer = RecipeSerializer(
             instance, data=request.data, partial=True
@@ -90,6 +87,7 @@ class RecipeViewSetDetail(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
+        """Метод удаления рецепта по id."""
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -186,7 +184,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.order_by('-date_joined').all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
-    pagination_class = CustomPagination
+    pagination_class = PageNumberPagination
 
     def create(self, request):
         """Метод создания нового пользователя."""
