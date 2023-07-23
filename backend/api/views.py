@@ -264,8 +264,8 @@ class ChangePasswordViewSet(viewsets.ViewSet):
         current_password = request.data.get('current_password')
 
         if not (
-            user.check_password(current_password) and
-            current_password != new_password and new_password is not None
+            user.check_password(current_password)
+            and current_password != new_password and new_password is not None
         ):
             return Response(
                 {'detail': 'Неверный пароль'},
