@@ -6,7 +6,7 @@ from .views import (
     TagViewSet, IngredientViewSet, RecipeViewSetList,
     RecipeViewSetDetail, AddFavoriteView, UserSubscriptionListAPIView,
     UserViewSet, UserDetailView, CurrentUserViewSet,
-    ChangePasswordViewSet, AddToShoppingCart,
+    ChangePasswordViewSet, AddToShoppingCart, DownloadShoppingCart
 )
 
 router = DefaultRouter()
@@ -49,5 +49,8 @@ urlpatterns = [
     ),
     path('recipes/<int:id>/favorite/', AddFavoriteView.as_view()),
     path('recipes/<int:id>/shopping_cart/', AddToShoppingCart.as_view()),
+    path('recipes/download_shopping_cart/', DownloadShoppingCart.as_view(
+        {'get': 'list'}
+    )),
     path('', include(router.urls)),
 ]

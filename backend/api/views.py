@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from rest_framework import viewsets, status, filters
@@ -177,6 +178,41 @@ class AddToShoppingCart(APIView):
             'Рецепт удален из списка покупок.',
             status=status.HTTP_204_NO_CONTENT
         )
+
+
+class DownloadShoppingCart(viewsets.ViewSet):
+    """"Вьюсет загрузки списка покупок."""
+
+    permission_classes = [IsAuthenticated]
+
+    def list(self, requset):
+        """Метод для обработки Get запросов."""
+        user = requset.user
+        shopping_cart_items = ShoppingCart.objects.filter(user=user)
+        ingredients = {}
+        for item in shopping_cart_items:
+            recipe = item.recipe
+            for ingredient in recipe.ingredients.all():
+                ingredient_name = ingredient.name
+                ingredient_amount = ingredient.amount
+                ingredient_measurement_unit = ingredient.measurement_unit
+
+                key = f"{ingredient_name} ({ingredient_measurement_unit})"
+                if key in ingredients:
+                    ingredients[key] += ingredient_amount
+                else:
+                    ingredients[key] = ingredient_amount
+
+        file_content = "\n".join(
+            [f"{ingredient} — {amount}"
+             for ingredient, amount in ingredients.items()]
+        )
+
+        response = HttpResponse(content_type='text/plain')
+        response['Content-Disposition'] = '''attachment;\n
+        filename="shopping_list.txt"'''
+        response.write(file_content)
+        return response
 
 
 class UserViewSet(viewsets.ModelViewSet):

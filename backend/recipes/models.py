@@ -40,7 +40,7 @@ class Ingredient(models.Model):
         max_length=200,
         verbose_name="Название ингредиента."
     )
-    quantity = models.DecimalField(
+    amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         verbose_name="Количество ингредиента."
