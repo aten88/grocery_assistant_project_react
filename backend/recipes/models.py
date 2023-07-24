@@ -63,36 +63,6 @@ class Ingredient(models.Model):
         return self.name
 
 
-# class IngredientToLoad(models.Model):
-#     """Модель ингредиента для загрузки в БД."""
-
-#     name = models.CharField(
-#         max_length=200,
-#         verbose_name="Название ингредиента."
-#     )
-#     amount = models.DecimalField(
-#         max_digits=10,
-#         decimal_places=2,
-#         verbose_name="Количество ингредиента.",
-#         default=0,
-#     )
-#     measurement_unit = models.CharField(
-#         max_length=50,
-#         verbose_name="Единица измерения."
-#     )
-
-#     class Meta:
-#         "Мета-данные модели."
-
-#         verbose_name = "Ингредиент"
-#         verbose_name_plural = "Ингредиенты"
-
-#     def __str__(self) -> str:
-#         """Метод строкового представления модели."""
-
-#         return self.name
-
-
 class Recipe(models.Model):
     """Модель рецепта."""
 
