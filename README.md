@@ -23,8 +23,8 @@ python manage.py migrate
 Добавить суперюзера:
 python manage.py createsuperuser
 
+Загрузить ингредиенты в БД
+python manage.py load_ingredients
+
 Запустить проект:
 python manage.py runserver
-
-Добавить данные в БД:
-Через админку или через API
