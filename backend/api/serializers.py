@@ -4,6 +4,7 @@ from django.core.files.base import ContentFile
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
+
 from recipes.models import (
     Tag, Ingredient,
     Recipe, Subscription, ShoppingCart, Favorite
@@ -36,15 +37,13 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = ['id', 'name', 'measurement_unit']
+        fields = ['id', 'name', 'amount', 'measurement_unit']
 
 
 class RecipeSerializer(serializers.ModelSerializer):
     """Сериализатор модели Recipe."""
 
-    ingredients = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all(), many=True
-    )
+    ingredients = IngredientSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True
     )
@@ -56,6 +55,22 @@ class RecipeSerializer(serializers.ModelSerializer):
             'ingredients', 'tags', 'image',
             'name', 'text', 'cooking_time'
         ]
+
+    def create(self, validated_data):
+        """Метод создания рецепта."""
+        ingredients_data = validated_data.pop('ingredients')
+
+        tags_data = validated_data.pop('tags')
+
+        recipe = Recipe.objects.create(**validated_data)
+
+        for ingredient_data in ingredients_data:
+            ingredient, _ = Ingredient.objects.get_or_create(**ingredient_data)
+            recipe.ingredients.add(ingredient)
+
+        recipe.tags.set(tags_data)
+
+        return recipe
 
 
 class FavoriteRecipeSerializer(serializers.ModelSerializer):
