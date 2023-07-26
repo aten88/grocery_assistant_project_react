@@ -56,22 +56,6 @@ class RecipeSerializer(serializers.ModelSerializer):
             'name', 'text', 'cooking_time'
         ]
 
-    def create(self, validated_data):
-        """Метод создания рецепта."""
-        ingredients_data = validated_data.pop('ingredients')
-
-        tags_data = validated_data.pop('tags')
-
-        recipe = Recipe.objects.create(**validated_data)
-
-        for ingredient_data in ingredients_data:
-            ingredient, _ = Ingredient.objects.get_or_create(**ingredient_data)
-            recipe.ingredients.add(ingredient)
-
-        recipe.tags.set(tags_data)
-
-        return recipe
-
 
 class FavoriteRecipeSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения избранного рецепта."""

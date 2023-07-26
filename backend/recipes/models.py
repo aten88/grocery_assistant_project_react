@@ -40,12 +40,6 @@ class Ingredient(models.Model):
         max_length=200,
         verbose_name="Название ингредиента."
     )
-    amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name="Количество ингредиента.",
-        default=0
-    )
     measurement_unit = models.CharField(
         max_length=50,
         verbose_name="Единица измерения."
@@ -86,10 +80,6 @@ class Recipe(models.Model):
     text = models.TextField(
         verbose_name="Подробное описание рецепта."
     )
-    ingredients = models.ManyToManyField(
-        Ingredient,
-        verbose_name="Название ингредиента."
-    )
     tags = models.ManyToManyField(
         Tag,
         verbose_name="Название тега."
@@ -114,6 +104,34 @@ class Recipe(models.Model):
         """Метод строкового представления модели."""
 
         return self.name
+
+
+class RecipeIngredient(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт'
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        verbose_name='Ингредиент'
+    )
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Количество ингредиента'
+    )
+    measurement_unit = models.CharField(max_length=50)
+
+    class Meta:
+        unique_together = ('recipe', 'ingredient')
+        verbose_name = "Ингредиент в рецепте"
+        verbose_name_plural = "Ингредиенты в рецептах"
+
+    def __str__(self) -> str:
+        """Метод строкового представления модели."""
+        return f'Ингредиент {self.ingredient} в рецепте {self.recipe}'
 
 
 class Favorite(models.Model):
