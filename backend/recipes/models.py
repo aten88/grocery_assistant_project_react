@@ -70,6 +70,12 @@ class Recipe(models.Model):
         verbose_name="Название рецепта.",
         unique=True
     )
+    recipe_ingredients = models.ManyToManyField(
+        Ingredient,
+        through='RecipeIngredient',
+        verbose_name='Ингредиенты',
+        related_name='recipes'
+    )
     image = models.ImageField(
         upload_to="recipes/images/",
         blank=True,
@@ -110,7 +116,8 @@ class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        verbose_name='Рецепт'
+        verbose_name='Рецепт',
+        related_name='recipe_ingredients_set'
     )
     ingredient = models.ForeignKey(
         Ingredient,
