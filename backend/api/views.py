@@ -46,7 +46,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
     search_fields = ['name']
 
 
-class RecipeViewSetList(viewsets.ModelViewSet):
+class RecipeViewSet(viewsets.ModelViewSet):
     """Вьюсет списка модели Recipe."""
 
     queryset = Recipe.objects.all()
@@ -54,12 +54,13 @@ class RecipeViewSetList(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = CustomPagination
 
-    def create(self, request, *args, **kwargs):
-        """Метод создания рецепта."""
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(author=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    # def create(self, request, *args, **kwargs):
+    #     """Метод создания рецепта."""
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_create(serializer)
+    #     headers = self.get_success_headers(serializer.data)
+    #     return Response(serializer.data, status=201, headers=headers)
 
 
 class RecipeViewSetDetail(viewsets.ModelViewSet):

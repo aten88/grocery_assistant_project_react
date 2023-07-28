@@ -70,7 +70,7 @@ class Recipe(models.Model):
         verbose_name="Название рецепта.",
         unique=True
     )
-    recipe_ingredients = models.ManyToManyField(
+    ingredients = models.ManyToManyField(
         Ingredient,
         through='RecipeIngredient',
         verbose_name='Ингредиенты',
@@ -129,7 +129,6 @@ class RecipeIngredient(models.Model):
         decimal_places=2,
         verbose_name='Количество ингредиента'
     )
-    measurement_unit = models.CharField(max_length=50)
 
     class Meta:
         unique_together = ('recipe', 'ingredient')

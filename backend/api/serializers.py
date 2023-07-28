@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 
 from recipes.models import (
-    Tag, Ingredient,
+    Tag, Ingredient, RecipeIngredient,
     Recipe, Subscription, ShoppingCart, Favorite
 )
 
@@ -40,10 +40,17 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'measurement_unit']
 
 
+class RecipeIngredientSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    amount = serializers.IntegerField()
+
+
 class RecipeSerializer(serializers.ModelSerializer):
     """Сериализатор модели Recipe."""
 
-    ingredients = IngredientSerializer(many=True)
+    ingredients = RecipeIngredientSerializer(
+        many=True, source='recipe_ingredients_set'
+    )
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True
     )
@@ -55,6 +62,13 @@ class RecipeSerializer(serializers.ModelSerializer):
             'ingredients', 'tags', 'image',
             'name', 'text', 'cooking_time'
         ]
+
+    def create(self, validated_data):
+        ingredients_data = validated_data.pop('ingredients')
+        recipe = Recipe.objects.create(**validated_data)
+        for ingredient_data in ingredients_data:
+            RecipeIngredient.objects.create(recipe=recipe, **ingredient_data)
+        return recipe
 
 
 class FavoriteRecipeSerializer(serializers.ModelSerializer):
