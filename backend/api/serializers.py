@@ -72,6 +72,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+        """Метод создания рецепта."""
         ingredients_data = validated_data.pop('recipe_ingredients_set')
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
@@ -79,9 +80,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         for ingredient_data in ingredients_data:
             RecipeIngredient.objects.create(
                 recipe=recipe,
-                ingredient=Ingredient.objects.get(
-                    id=ingredient_data['ingredient']['id']
-                ),
+                ingredient_id=ingredient_data['ingredient']['id'],
                 amount=ingredient_data['amount']
             )
         return recipe
