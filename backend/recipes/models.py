@@ -8,16 +8,16 @@ class Tag(models.Model):
     name = models.CharField(
         max_length=200,
         verbose_name="Название Тега.",
-        unique=True
+        # unique=True
     )
     color = models.CharField(
         max_length=7,
         verbose_name="HEX-код цвета.",
-        unique=True
+        # unique=True
     )
     slug = models.SlugField(
         max_length=100,
-        unique=True,
+        # unique=True,
         verbose_name="Слаг."
     )
 

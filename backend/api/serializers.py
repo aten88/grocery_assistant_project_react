@@ -3,6 +3,7 @@ import base64
 from django.core.files.base import ContentFile
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework.fields import CurrentUserDefault
 
 
 from recipes.models import (
@@ -40,9 +41,14 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'measurement_unit']
 
 
-class RecipeIngredientSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
+class RecipeIngredientSerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField(source='ingredient.id')
     amount = serializers.IntegerField()
+
+    class Meta:
+        model = RecipeIngredient
+        fields = ['id', 'amount']
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -52,22 +58,33 @@ class RecipeSerializer(serializers.ModelSerializer):
         many=True, source='recipe_ingredients_set'
     )
     tags = serializers.PrimaryKeyRelatedField(
-        queryset=Tag.objects.all(), many=True
+        many=True,
+        queryset=Tag.objects.all()
     )
     image = Base64ImageField(required=False, allow_null=True)
+    author = serializers.HiddenField(default=CurrentUserDefault())
 
     class Meta:
         model = Recipe
         fields = [
-            'ingredients', 'tags', 'image',
+            'author', 'ingredients', 'tags', 'image',
             'name', 'text', 'cooking_time'
         ]
 
     def create(self, validated_data):
-        ingredients_data = validated_data.pop('ingredients')
+        ingredients_data = validated_data.pop('recipe_ingredients_set')
+        tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
+        recipe.tags.add(*tags)
         for ingredient_data in ingredients_data:
-            RecipeIngredient.objects.create(recipe=recipe, **ingredient_data)
+            ingredient_serializer = RecipeIngredientSerializer(data=ingredient_data)
+            print(ingredient_serializer)
+            ingredient_serializer.is_valid(raise_exception=True)
+            ingredient = ingredient_serializer.save()
+            RecipeIngredient.objects.create(
+                recipe=recipe, ingredient=ingredient,
+                **ingredient_data
+            )
         return recipe
 
 
