@@ -77,13 +77,12 @@ class RecipeSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.add(*tags)
         for ingredient_data in ingredients_data:
-            ingredient_serializer = RecipeIngredientSerializer(data=ingredient_data)
-            print(ingredient_serializer)
-            ingredient_serializer.is_valid(raise_exception=True)
-            ingredient = ingredient_serializer.save()
             RecipeIngredient.objects.create(
-                recipe=recipe, ingredient=ingredient,
-                **ingredient_data
+                recipe=recipe,
+                ingredient=Ingredient.objects.get(
+                    id=ingredient_data['ingredient']['id']
+                ),
+                amount=ingredient_data['amount']
             )
         return recipe
 
