@@ -57,14 +57,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = CustomPagination
 
-    # def create(self, request, *args, **kwargs):
-    #     """Метод создания рецепта."""
-    #     serializer = self.get_serializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     self.perform_create(serializer)
-    #     headers = self.get_success_headers(serializer.data)
-    #     return Response(serializer.data, status=201, headers=headers)
-
 
 class RecipeViewSetDetail(viewsets.ModelViewSet):
     """Вьюсет модели Recipe по ID."""

@@ -139,17 +139,17 @@ class UserDetailSerializer(serializers.ModelSerializer):
 class SubscriptionSerialiazer(serializers.ModelSerializer):
     """Сериализатор модели подписок."""
     author = serializers.SerializerMethodField()
-    recipe = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
 
     class Meta:
         model = Subscription
-        fields = ['author', 'recipe']
+        fields = ['author', 'recipes']
 
     def get_author(self, obj):
         """Метод получения имени автора."""
         return obj.author.username
 
-    def get_recipe(self, obj):
+    def get_recipes(self, obj):
         """Метод получения рецептов автора по подписке."""
 
         author = obj.author
