@@ -1,7 +1,8 @@
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
-from rest_framework import viewsets, status, filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.permissions import (
     AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -24,6 +25,7 @@ from .serializers import (
 )
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrReadOnly
+from .filters import IngredientFilter
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -42,8 +44,9 @@ class IngredientViewSet(viewsets.ModelViewSet):
     serializer_class = IngredientSerializer
     permission_classes = [AllowAny]
     pagination_class = None
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name']
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = IngredientFilter
+    search_fields = ('^name',)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
