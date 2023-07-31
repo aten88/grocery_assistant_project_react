@@ -3,7 +3,6 @@ import base64
 from django.core.files.base import ContentFile
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from rest_framework.fields import CurrentUserDefault
 
 
 from recipes.models import (
@@ -23,6 +22,21 @@ class Base64ImageField(serializers.ImageField):
             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
 
         return super().to_internal_value(data)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор модели User."""
+
+    email = serializers.EmailField(required=True, max_length=254)
+    first_name = serializers.CharField(required=True, max_length=150)
+    last_name = serializers.CharField(required=True, max_length=150)
+
+    class Meta:
+        model = User
+        fields = [
+            'email', 'id', 'username',
+            'first_name', 'last_name',
+        ]
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -62,7 +76,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all()
     )
     image = Base64ImageField(required=False, allow_null=True)
-    author = serializers.HiddenField(default=CurrentUserDefault())
+    author = UserSerializer()
 
     class Meta:
         model = Recipe
@@ -92,21 +106,6 @@ class FavoriteRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ['id', 'name', 'image', 'cooking_time']
-
-
-class UserSerializer(serializers.ModelSerializer):
-    """Сериализатор модели User."""
-
-    email = serializers.EmailField(required=True, max_length=254)
-    first_name = serializers.CharField(required=True, max_length=150)
-    last_name = serializers.CharField(required=True, max_length=150)
-
-    class Meta:
-        model = User
-        fields = [
-            'email', 'id', 'username',
-            'first_name', 'last_name',
-        ]
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
