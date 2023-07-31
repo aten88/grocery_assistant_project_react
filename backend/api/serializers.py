@@ -25,6 +25,21 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
 
 
+class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор модели User."""
+
+    email = serializers.EmailField(required=True, max_length=254)
+    first_name = serializers.CharField(required=True, max_length=150)
+    last_name = serializers.CharField(required=True, max_length=150)
+
+    class Meta:
+        model = User
+        fields = [
+            'email', 'id', 'username',
+            'first_name', 'last_name',
+        ]
+
+
 class TagSerializer(serializers.ModelSerializer):
     """Сериализатор модели Tag."""
 
@@ -62,7 +77,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all()
     )
     image = Base64ImageField(required=False, allow_null=True)
-    author = serializers.HiddenField(default=CurrentUserDefault())
+    author = UserSerializer(default=CurrentUserDefault())
 
     class Meta:
         model = Recipe
@@ -92,21 +107,6 @@ class FavoriteRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ['id', 'name', 'image', 'cooking_time']
-
-
-class UserSerializer(serializers.ModelSerializer):
-    """Сериализатор модели User."""
-
-    email = serializers.EmailField(required=True, max_length=254)
-    first_name = serializers.CharField(required=True, max_length=150)
-    last_name = serializers.CharField(required=True, max_length=150)
-
-    class Meta:
-        model = User
-        fields = [
-            'email', 'id', 'username',
-            'first_name', 'last_name',
-        ]
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
