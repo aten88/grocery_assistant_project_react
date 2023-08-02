@@ -25,7 +25,7 @@ from .serializers import (
 )
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrReadOnly
-from .filters import IngredientFilter
+from .filters import IngredientFilter, RecipeFilter
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -56,10 +56,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = CustomPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
 
 
 class RecipeViewSetDetail(viewsets.ModelViewSet):
-    """Вьюсет модели Recipe по ID."""
+    """Вьюсет модели Recipe по id."""
 
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializerDetail
@@ -119,7 +121,7 @@ class AddFavoriteView(APIView):
         )
 
     def delete(self, request, id):
-        """Метод удаления рецепта из избранного"""
+        """Метод удаления рецепта из избранного."""
         try:
             Favorite.objects.get(user=request.user, recipe_id=id).delete()
         except Favorite.DoesNotExist:

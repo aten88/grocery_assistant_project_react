@@ -152,8 +152,7 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
     def get_recipes(self, obj):
         """Метод получения рецептов автора по подписке."""
 
-        author = obj.author
-        recipes = Recipe.objects.filter(author=author)
+        recipes = Recipe.objects.filter(author=obj.author)
         serializer = RecipeSerializer(recipes, many=True)
 
         return serializer.data

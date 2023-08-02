@@ -1,5 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
+
+
+def unique_color_validator(value):
+    """Кастомный валидатор для проверки уникальности HEX-кода цвета."""
+
+    if Tag.objects.filter(color=value).exists():
+        raise ValidationError("HEX-код цвета должен быть уникальным.")
 
 
 class Tag(models.Model):
@@ -8,16 +17,25 @@ class Tag(models.Model):
     name = models.CharField(
         max_length=200,
         verbose_name="Название Тега.",
-        # unique=True
+        unique=True
     )
     color = models.CharField(
         max_length=7,
         verbose_name="HEX-код цвета.",
-        # unique=True
+        unique=True,
+        validators=[
+            RegexValidator(
+                regex=r'^#[0-9A-Fa-f]{6}$',
+                message="Введите HEX-код цвета в формате #RRGGBB.",
+                code='invalid_color_format'
+            ),
+            unique_color_validator,
+        ],
+        help_text="Введите HEX-код цвета в формате #RRGGBB."
     )
     slug = models.SlugField(
         max_length=100,
-        # unique=True,
+        unique=True,
         verbose_name="Слаг."
     )
 
@@ -38,11 +56,11 @@ class Ingredient(models.Model):
 
     name = models.CharField(
         max_length=200,
-        verbose_name="Название ингредиента."
+        verbose_name="Название ингредиента"
     )
     measurement_unit = models.CharField(
         max_length=50,
-        verbose_name="Единица измерения."
+        verbose_name="Единица измерения"
     )
 
     class Meta:
