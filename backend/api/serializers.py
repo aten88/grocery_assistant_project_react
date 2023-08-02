@@ -51,9 +51,17 @@ class TagSerializer(serializers.ModelSerializer):
 class IngredientSerializer(serializers.ModelSerializer):
     """Сериализатор модели Ingredient."""
 
+    amount = serializers.SerializerMethodField()
+
     class Meta:
         model = Ingredient
-        fields = ['id', 'name', 'measurement_unit']
+        fields = ['id', 'name', 'measurement_unit', 'amount', ]
+
+    def get_amount(self, ingredient):
+        recipe_ingredients = RecipeIngredient.objects.filter(
+            ingredient=ingredient
+        )
+        return sum(recipe.amount for recipe in recipe_ingredients)
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
@@ -180,7 +188,7 @@ class RecipeSerializerDetail(serializers.ModelSerializer):
         fields = [
             'id', 'tags', 'author', 'ingredients',
             'is_favorited', 'is_in_shopping_cart',
-            'name', 'image', 'text', 'cooking_time'
+            'name', 'image', 'text', 'cooking_time',
         ]
 
     def get_is_favorited(self, obj):
