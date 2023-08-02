@@ -1,7 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.validators import RegexValidator
+from django.core.validators import (
+    RegexValidator, MinValueValidator, MaxValueValidator
+)
 from django.core.exceptions import ValidationError
+
+from .constants import MIN_COOKING_TIME, MAX_COOKING_TIME
 
 
 def unique_color_validator(value):
@@ -109,7 +113,17 @@ class Recipe(models.Model):
         verbose_name="Название тега."
     )
     cooking_time = models.PositiveBigIntegerField(
-        verbose_name="Время приготовления."
+        verbose_name="Время приготовления.",
+        validators=[
+            MinValueValidator(
+                MIN_COOKING_TIME,
+                message="Время приготовления должно быть больше 0."
+            ),
+            MaxValueValidator(
+                MAX_COOKING_TIME,
+                message="Время приготовления должно быть меньше 3 суток."
+            )
+        ]
     )
     created = models.DateTimeField(
         auto_now_add=True,
