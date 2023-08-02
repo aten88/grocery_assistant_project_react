@@ -69,9 +69,21 @@ class Ingredient(models.Model):
 
     class Meta:
         "Мета-данные модели."
-
+        unique_together = ('name', 'measurement_unit')
         verbose_name = "Ингредиент"
         verbose_name_plural = "Ингредиенты"
+
+    def clean(self):
+        """Метод валидации данных перед сохранением."""
+        existing_ingredient = Ingredient.objects.filter(
+            name=self.name,
+            measurement_unit=self.measurement_unit
+        ).first()
+
+        if existing_ingredient and existing_ingredient.pk != self.pk:
+            raise ValidationError(
+                "Такой ингредиент с такой единицей измерения уже существует."
+            )
 
     def __str__(self) -> str:
         """Метод строкового представления модели."""
@@ -194,6 +206,22 @@ class Favorite(models.Model):
         verbose_name = "Избранное"
         verbose_name_plural = "Избранное"
 
+    def clean(self):
+        """Метод валидации данных перед сохранением."""
+        if self.recipe.author == self.user:
+            raise ValidationError(
+                "Вы не можете добавить свой рецепт в избранное."
+            )
+
+    def validate_unique(self, exclude=None):
+        """Метод для проверки уникальности данных перед сохранением."""
+        super().validate_unique(exclude)
+
+        if Favorite.objects.filter(
+            user=self.user, recipe=self.recipe
+        ).exists():
+            raise ValidationError("Этот рецепт уже добавлен в избранное.")
+
     def __str__(self) -> str:
         """Метод строкового представления модели."""
         return f'Рецепт {self.recipe} в избранном у {self.user}'
@@ -217,7 +245,7 @@ class Subscription(models.Model):
 
     class Meta:
         "Мета-данные модели."
-
+        unique_together = ('author', 'user')
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
 
@@ -226,6 +254,11 @@ class Subscription(models.Model):
         return (
             f'Пользователь {self.user} подписан на {self.author}'
         )
+
+    def clean(self):
+        """Метод валидации данных перед сохранением."""
+        if self.user == self.author:
+            raise ValidationError("Вы не можете подписаться на самого себя.")
 
 
 class ShoppingCart(models.Model):
@@ -246,7 +279,7 @@ class ShoppingCart(models.Model):
 
     class Meta:
         "Мета-данные модели."
-
+        unique_together = ('user', 'recipe')
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
 
