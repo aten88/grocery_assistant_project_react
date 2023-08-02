@@ -108,6 +108,29 @@ class RecipeSerializer(serializers.ModelSerializer):
             )
         return recipe
 
+    def update(self, instance, validated_data):
+        """Метод обновления рецепта."""
+        instance.name = validated_data.get('name', instance.name)
+        instance.text = validated_data.get('text', instance.text)
+        instance.cooking_time = validated_data.get(
+            'cooking_time', instance.cooking_time
+        )
+
+        tags = validated_data.get('tags', instance.tags.all())
+        instance.tags.set(tags)
+
+        ingredients_data = validated_data.get('recipe_ingredients_set', [])
+        RecipeIngredient.objects.filter(recipe=instance).delete()
+        for ingredient_data in ingredients_data:
+            RecipeIngredient.objects.create(
+                recipe=instance,
+                ingredient_id=ingredient_data['ingredient']['id'],
+                amount=ingredient_data['amount']
+            )
+
+        instance.save()
+        return instance
+
 
 class FavoriteRecipeSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения избранного рецепта."""
