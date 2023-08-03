@@ -14,7 +14,7 @@ from rest_framework.generics import (
 from rest_framework.pagination import PageNumberPagination
 
 from recipes.models import (
-    Tag, Ingredient, Recipe,
+    Tag, Ingredient, Recipe, RecipeIngredient,
     Favorite, Subscription, ShoppingCart
 )
 from .serializers import (
@@ -183,16 +183,18 @@ class DownloadShoppingCart(viewsets.ViewSet):
 
     permission_classes = [IsAuthenticated]
 
-    def list(self, requset):
+    def list(self, request):
         """Метод для обработки Get запросов."""
-        user = requset.user
-        shopping_cart_items = ShoppingCart.objects.filter(user=user)
+        user = request.user
         ingredients = {}
-        for item in shopping_cart_items:
+        for item in ShoppingCart.objects.filter(user=user):
             recipe = item.recipe
-            for ingredient in recipe.ingredients.all():
+            for recipe_ingredient in RecipeIngredient.objects.filter(
+                recipe=recipe
+            ):
+                ingredient = recipe_ingredient.ingredient
                 ingredient_name = ingredient.name
-                ingredient_amount = ingredient.amount
+                ingredient_amount = recipe_ingredient.amount
                 ingredient_measurement_unit = ingredient.measurement_unit
 
                 key = f"{ingredient_name} ({ingredient_measurement_unit})"
