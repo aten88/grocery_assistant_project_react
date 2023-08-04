@@ -68,7 +68,7 @@ class IngredientSerializer(serializers.ModelSerializer):
                 return recipe_ingredient.amount
             except RecipeIngredient.DoesNotExist:
                 pass
-        return 0
+        return None
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
