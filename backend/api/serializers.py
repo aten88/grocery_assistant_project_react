@@ -176,24 +176,51 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 class SubscriptionSerialiazer(serializers.ModelSerializer):
     """Сериализатор модели подписок."""
-    author = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
+    first_name = serializers.SerializerMethodField()
+    last_name = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Subscription
-        fields = ['author', 'recipes']
+        fields = [
+            'email', 'id', 'first_name', 'last_name', 'is_subscribed',
+            'recipes', 'recipes_count'
+        ]
 
-    def get_author(self, obj):
+    def get_email(self, obj):
+        """Метод получения email автора."""
+        return obj.author.email
+
+    def get_first_name(self, obj):
         """Метод получения имени автора."""
-        return obj.author.username
+        return obj.author.first_name
+
+    def get_last_name(self, obj):
+        """Метод получения фамилии автора."""
+        return obj.author.last_name
+
+    def get_is_subscribed(self, obj):
+        """Метод проверки подписки юзера."""
+
+        request_user = self.context.get('request').user
+        if request_user.is_authenticated:
+            return Subscription.objects.filter(
+                author=obj.id, user=request_user
+            ).exists()
+        return False
 
     def get_recipes(self, obj):
         """Метод получения рецептов автора по подписке."""
-
         recipes = Recipe.objects.filter(author=obj.author)
         serializer = RecipeSerializer(recipes, many=True)
-
         return serializer.data
+
+    def get_recipes_count(self, obj):
+        """Метод получения количества рецептов автора."""
+        return Recipe.objects.filter(author=obj.author).count()
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
