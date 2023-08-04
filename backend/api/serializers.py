@@ -58,10 +58,17 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'measurement_unit', 'amount', ]
 
     def get_amount(self, ingredient):
-        recipe_ingredients = RecipeIngredient.objects.filter(
-            ingredient=ingredient
-        )
-        return sum(recipe.amount for recipe in recipe_ingredients)
+        recipe_id = self.context.get('recipe_id')
+        if recipe_id:
+            try:
+                recipe_ingredient = RecipeIngredient.objects.get(
+                    ingredient=ingredient,
+                    recipe_id=recipe_id
+                )
+                return recipe_ingredient.amount
+            except RecipeIngredient.DoesNotExist:
+                pass
+        return 0
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):

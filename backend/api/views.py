@@ -69,11 +69,10 @@ class RecipeViewSetDetail(viewsets.ModelViewSet):
     lookup_field = 'id'
     pagination_class = None
 
-    def retrieve(self, request, *args, **kwargs):
-        """Метод получения данных из рецепта по id."""
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['recipe_id'] = self.kwargs.get('id')
+        return context
 
     def partial_update(self, request, *args, **kwargs):
         """Метод обновления данных в рецептe по id."""
