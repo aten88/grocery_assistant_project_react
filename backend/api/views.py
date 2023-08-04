@@ -184,9 +184,8 @@ class DownloadShoppingCart(viewsets.ViewSet):
 
     def list(self, request):
         """Метод для обработки Get запросов."""
-        user = request.user
         ingredients = {}
-        for item in ShoppingCart.objects.filter(user=user):
+        for item in ShoppingCart.objects.filter(user=request.user):
             recipe = item.recipe
             for recipe_ingredient in RecipeIngredient.objects.filter(
                 recipe=recipe

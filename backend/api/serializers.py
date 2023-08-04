@@ -28,10 +28,6 @@ class Base64ImageField(serializers.ImageField):
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор модели User."""
 
-    email = serializers.EmailField(required=True, max_length=254)
-    first_name = serializers.CharField(required=True, max_length=150)
-    last_name = serializers.CharField(required=True, max_length=150)
-
     class Meta:
         model = User
         fields = [
