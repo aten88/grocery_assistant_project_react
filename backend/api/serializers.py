@@ -170,9 +170,17 @@ class UserDetailSerializer(serializers.ModelSerializer):
         return False
 
 
+class ShortListRecipeSerializer(serializers.ModelSerializer):
+    """Краткий сериализатор рецепта."""
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+
 class SubscriptionSerialiazer(serializers.ModelSerializer):
     """Сериализатор модели подписок."""
     email = serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
     first_name = serializers.SerializerMethodField()
     last_name = serializers.SerializerMethodField()
     is_subscribed = serializers.SerializerMethodField()
@@ -182,13 +190,17 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = [
-            'email', 'id', 'first_name', 'last_name', 'is_subscribed',
-            'recipes', 'recipes_count'
+            'email', 'id', 'username', 'first_name', 'last_name',
+            'is_subscribed', 'recipes', 'recipes_count'
         ]
 
     def get_email(self, obj):
         """Метод получения email автора."""
         return obj.author.email
+
+    def get_username(self, obj):
+        """Метод получения username автора."""
+        return obj.author.username
 
     def get_first_name(self, obj):
         """Метод получения имени автора."""
@@ -204,14 +216,14 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
         request_user = self.context.get('request').user
         if request_user.is_authenticated:
             return Subscription.objects.filter(
-                author=obj.id, user=request_user
+                author=obj.author, user=request_user
             ).exists()
         return False
 
     def get_recipes(self, obj):
         """Метод получения рецептов автора по подписке."""
         recipes = Recipe.objects.filter(author=obj.author)
-        serializer = RecipeSerializer(recipes, many=True)
+        serializer = ShortListRecipeSerializer(recipes, many=True)
         return serializer.data
 
     def get_recipes_count(self, obj):

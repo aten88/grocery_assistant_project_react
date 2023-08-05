@@ -16,9 +16,16 @@ class IngredientAdmin(admin.ModelAdmin):
     pass
 
 
+class RecipeIngredientInline(admin.TabularInline):
+    model = RecipeIngredient
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    pass
+    inlines = [RecipeIngredientInline]
+
+    def save_model(self, request, obj, form, change):
+        return obj.save
 
 
 @admin.register(Favorite)
