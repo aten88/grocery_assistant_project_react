@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
-
 from recipes.models import (
     Tag, Ingredient, RecipeIngredient,
     Recipe, Subscription, ShoppingCart, Favorite
@@ -56,15 +55,13 @@ class IngredientSerializer(serializers.ModelSerializer):
     def get_amount(self, ingredient):
         ''''Метод получения количества ингредиента.'''
         recipe_id = self.context.get('recipe_id')
-        if recipe_id:
-            try:
-                recipe_ingredient = RecipeIngredient.objects.get(
-                    ingredient=ingredient,
-                    recipe_id=recipe_id
-                )
-                return recipe_ingredient.amount
-            except RecipeIngredient.DoesNotExist:
-                pass
+        try:
+            recipe_ingredient = RecipeIngredient.objects.get(
+                ingredient=ingredient, recipe_id=recipe_id
+            )
+            return recipe_ingredient.amount
+        except RecipeIngredient.DoesNotExist:
+            pass
         return None
 
 
@@ -165,11 +162,12 @@ class UserDetailSerializer(serializers.ModelSerializer):
         '''Метод проверки подписки юзера.'''
 
         request_user = self.context.get('request').user
-        if request_user.is_authenticated:
-            return Subscription.objects.filter(
-                author=obj.id, user=request_user
+        return (
+            request_user.is_authenticated
+            and Subscription.objects.filter(
+             author=obj.id, user=request_user
             ).exists()
-        return False
+        )
 
 
 class ShortListRecipeSerializer(serializers.ModelSerializer):
