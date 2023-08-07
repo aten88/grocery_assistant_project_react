@@ -29,7 +29,7 @@ from .filters import IngredientFilter, RecipeFilter
 
 
 class TagViewSet(viewsets.ModelViewSet):
-    """Вьюсет модели Tag."""
+    '''Вьюсет модели Tag.'''
 
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
@@ -38,7 +38,7 @@ class TagViewSet(viewsets.ModelViewSet):
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
-    """Вьюсет модели Ingredient."""
+    '''Вьюсет модели Ingredient.'''
 
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
@@ -50,7 +50,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    """Вьюсет списка модели Recipe."""
+    '''Вьюсет списка модели Recipe.'''
 
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
@@ -61,7 +61,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class RecipeViewSetDetail(viewsets.ModelViewSet):
-    """Вьюсет модели Recipe по id."""
+    '''Вьюсет модели Recipe по id.'''
 
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializerDetail
@@ -75,7 +75,7 @@ class RecipeViewSetDetail(viewsets.ModelViewSet):
         return context
 
     def partial_update(self, request, *args, **kwargs):
-        """Метод обновления данных в рецептe по id."""
+        '''Метод обновления данных в рецептe по id.'''
         instance = self.get_object()
         serializer = RecipeSerializer(
             instance, data=request.data, partial=True
@@ -85,17 +85,17 @@ class RecipeViewSetDetail(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
-        """Метод удаления рецепта по id."""
+        '''Метод удаления рецепта по id.'''
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AddFavoriteView(APIView):
-    """Вьюсет добавления рецепта."""
+    '''Вьюсет добавления рецепта.'''
 
     def post(self, request, id):
-        """"Метод добавления рецепта в избранное."""
+        '''Метод добавления рецепта в избранное.'''
         try:
             recipe = Recipe.objects.get(id=id)
         except Recipe.DoesNotExist:
@@ -120,7 +120,7 @@ class AddFavoriteView(APIView):
         )
 
     def delete(self, request, id):
-        """Метод удаления рецепта из избранного."""
+        '''Метод удаления рецепта из избранного.'''
         try:
             Favorite.objects.get(user=request.user, recipe_id=id).delete()
         except Favorite.DoesNotExist:
@@ -135,10 +135,10 @@ class AddFavoriteView(APIView):
 
 
 class AddToShoppingCart(APIView):
-    """Вьюсет для добавления рецепта в список покупок."""
+    '''Вьюсет для добавления рецепта в список покупок.'''
 
     def post(self, request, id):
-        """Метод для добавления рецепта в список покупок."""
+        '''Метод для добавления рецепта в список покупок.'''
         try:
             recipe = Recipe.objects.get(id=id)
             user = request.user
@@ -163,7 +163,7 @@ class AddToShoppingCart(APIView):
         )
 
     def delete(self, request, id):
-        """Метод удаления рецепта из списка покупок."""
+        '''Метод удаления рецепта из списка покупок.'''
         try:
             ShoppingCart.objects.get(user=request.user, recipe_id=id).delete()
         except ShoppingCart.DoesNotExist:
@@ -178,12 +178,12 @@ class AddToShoppingCart(APIView):
 
 
 class DownloadShoppingCart(viewsets.ViewSet):
-    """"Вьюсет загрузки списка покупок."""
+    '''Вьюсет загрузки списка покупок.'''
 
     permission_classes = [IsAuthenticated]
 
     def list(self, request):
-        """Метод для обработки Get запросов."""
+        '''Метод для обработки Get запросов.'''
         ingredients = {}
         for item in ShoppingCart.objects.filter(user=request.user):
             recipe = item.recipe
@@ -195,14 +195,14 @@ class DownloadShoppingCart(viewsets.ViewSet):
                 ingredient_amount = recipe_ingredient.amount
                 ingredient_measurement_unit = ingredient.measurement_unit
 
-                key = f"{ingredient_name} ({ingredient_measurement_unit})"
+                key = f'{ingredient_name} ({ingredient_measurement_unit})'
                 if key in ingredients:
                     ingredients[key] += ingredient_amount
                 else:
                     ingredients[key] = ingredient_amount
 
-        file_content = "\n".join(
-            [f"{ingredient} — {amount}"
+        file_content = '\n'.join(
+            [f'{ingredient} — {amount}'
              for ingredient, amount in ingredients.items()]
         )
 
@@ -215,14 +215,14 @@ class DownloadShoppingCart(viewsets.ViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    """Вьюсет модели User."""
+    '''Вьюсет модели User.'''
     queryset = User.objects.order_by('-date_joined').all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
     pagination_class = PageNumberPagination
 
     def create(self, request):
-        """Метод создания нового пользователя."""
+        '''Метод создания нового пользователя.'''
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             password = request.data.get('password')
@@ -232,7 +232,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class UserDetailView(RetrieveAPIView):
-    """Вьюсет для User по id."""
+    '''Вьюсет для User по id.'''
 
     permission_classes = [AllowAny]
     queryset = User.objects.all()
@@ -241,22 +241,22 @@ class UserDetailView(RetrieveAPIView):
 
 
 class CurrentUserViewSet(RetrieveAPIView):
-    """API view для получения данных текущего пользователя."""
+    '''API view для получения данных текущего пользователя.'''
     serializer_class = UserDetailSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        """Метод для получения текущего пользователя."""
+        '''Метод для получения текущего пользователя.'''
         return self.request.user
 
 
 class ChangePasswordViewSet(viewsets.ViewSet):
-    """Вьюсет для смены пароля."""
+    '''Вьюсет для смены пароля.'''
 
     permission_classes = [IsAuthenticated]
 
     def set_password(self, request):
-        """Метод проверки и смены пароля."""
+        '''Метод проверки и смены пароля.'''
         user = request.user
         new_password = request.data.get('new_password')
         current_password = request.data.get('current_password')
@@ -279,18 +279,18 @@ class ChangePasswordViewSet(viewsets.ViewSet):
 
 
 class UserSubscriptionListAPIView(ListAPIView):
-    """Вьюсет для получения списка подписок."""
+    '''Вьюсет для получения списка подписок.'''
 
     serializer_class = SubscriptionSerialiazer
     permission_classes = [IsAuthenticated]
     pagination_class = PageNumberPagination
 
     def get_queryset(self):
-        """Метод получения подписок юзера."""
+        '''Метод получения подписок юзера.'''
         return Subscription.objects.filter(user=self.request.user)
 
     def post(self, request, id):
-        """Метод создания подписки по id."""
+        '''Метод создания подписки по id.'''
 
         user_to_subscribe = get_object_or_404(User, id=id)
 
@@ -318,7 +318,7 @@ class UserSubscriptionListAPIView(ListAPIView):
         return Response(author_data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, id):
-        """Метод удаления подписки по id."""
+        '''Метод удаления подписки по id.'''
         user_to_unsubscribe = get_object_or_404(User, id=id)
 
         if get_object_or_404(

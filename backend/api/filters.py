@@ -5,7 +5,7 @@ from recipes.models import Ingredient, Tag, Recipe
 
 
 class IngredientFilter(FilterSet):
-    """Фильтр для поиска по названию ингредиента."""
+    '''Фильтр для поиска по названию ингредиента.'''
 
     name = rest_framework.CharFilter(lookup_expr='istartswith')
 
@@ -15,7 +15,7 @@ class IngredientFilter(FilterSet):
 
 
 class RecipeFilter(FilterSet):
-    """ Фильтр для избранного и списка покупок."""
+    '''Фильтр для избранного и списка покупок.'''
     tags = filters.ModelMultipleChoiceFilter(
         queryset=Tag.objects.all(),
         field_name='tags__slug',

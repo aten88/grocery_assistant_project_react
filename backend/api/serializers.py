@@ -13,10 +13,10 @@ from recipes.models import (
 
 
 class Base64ImageField(serializers.ImageField):
-    """Кастомное поле для кодирования изображений."""
+    '''Кастомное поле для кодирования изображений.'''
 
     def to_internal_value(self, data):
-        """Метод декодирования картинки."""
+        '''Метод декодирования картинки.'''
         if isinstance(data, str) and data.startswith('data:image'):
             format, imgstr = data.split(';base64,')
             ext = format.split('/')[-1]
@@ -26,7 +26,7 @@ class Base64ImageField(serializers.ImageField):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Сериализатор модели User."""
+    '''Сериализатор модели User.'''
 
     class Meta:
         model = User
@@ -37,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
-    """Сериализатор модели Tag."""
+    '''Сериализатор модели Tag.'''
 
     class Meta:
         model = Tag
@@ -45,7 +45,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    """Сериализатор модели Ingredient."""
+    '''Сериализатор модели Ingredient.'''
 
     amount = serializers.SerializerMethodField()
 
@@ -54,6 +54,7 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'measurement_unit', 'amount', ]
 
     def get_amount(self, ingredient):
+        ''''Метод получения количества ингредиента.'''
         recipe_id = self.context.get('recipe_id')
         if recipe_id:
             try:
@@ -68,6 +69,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
+    '''Сериализатор ингредиеентов в рецепте.'''
 
     id = serializers.IntegerField(source='ingredient.id')
     amount = serializers.IntegerField()
@@ -78,7 +80,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    """Сериализатор модели Recipe."""
+    '''Сериализатор модели Recipe.'''
 
     ingredients = RecipeIngredientSerializer(
         many=True, source='recipe_ingredients_set'
@@ -98,7 +100,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        """Метод создания рецепта."""
+        '''Метод создания рецепта.'''
         ingredients_data = validated_data.pop('recipe_ingredients_set')
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
@@ -112,7 +114,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, recipe, validated_data):
-        """Метод обновления рецепта."""
+        '''Метод обновления рецепта.'''
         recipe.name = validated_data.get('name', recipe.name)
         recipe.text = validated_data.get('text', recipe.text)
         recipe.cooking_time = validated_data.get(
@@ -136,7 +138,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class FavoriteRecipeSerializer(serializers.ModelSerializer):
-    """Сериализатор для отображения избранного рецепта."""
+    '''Сериализатор для отображения избранного рецепта.'''
 
     class Meta:
         model = Recipe
@@ -144,7 +146,7 @@ class FavoriteRecipeSerializer(serializers.ModelSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
-    """Сериализатор модели User по id."""
+    '''Сериализатор модели User по id.'''
 
     email = serializers.EmailField(required=True, max_length=254)
     first_name = serializers.CharField(required=True, max_length=150)
@@ -160,7 +162,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_is_subscribed(self, obj):
-        """Метод проверки подписки юзера."""
+        '''Метод проверки подписки юзера.'''
 
         request_user = self.context.get('request').user
         if request_user.is_authenticated:
@@ -171,14 +173,14 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 
 class ShortListRecipeSerializer(serializers.ModelSerializer):
-    """Краткий сериализатор рецепта."""
+    '''Краткий сериализатор рецепта.'''
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class SubscriptionSerialiazer(serializers.ModelSerializer):
-    """Сериализатор модели подписок."""
+    '''Сериализатор модели подписок.'''
     email = serializers.SerializerMethodField()
     username = serializers.SerializerMethodField()
     first_name = serializers.SerializerMethodField()
@@ -195,23 +197,23 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
         ]
 
     def get_email(self, obj):
-        """Метод получения email автора."""
+        '''Метод получения email автора.'''
         return obj.author.email
 
     def get_username(self, obj):
-        """Метод получения username автора."""
+        '''Метод получения username автора.'''
         return obj.author.username
 
     def get_first_name(self, obj):
-        """Метод получения имени автора."""
+        '''Метод получения имени автора.'''
         return obj.author.first_name
 
     def get_last_name(self, obj):
-        """Метод получения фамилии автора."""
+        '''Метод получения фамилии автора.'''
         return obj.author.last_name
 
     def get_is_subscribed(self, obj):
-        """Метод проверки подписки юзера."""
+        '''Метод проверки подписки юзера.'''
 
         request_user = self.context.get('request').user
         if request_user.is_authenticated:
@@ -221,18 +223,18 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
         return False
 
     def get_recipes(self, obj):
-        """Метод получения рецептов автора по подписке."""
+        '''Метод получения рецептов автора по подписке.'''
         recipes = Recipe.objects.filter(author=obj.author)
         serializer = ShortListRecipeSerializer(recipes, many=True)
         return serializer.data
 
     def get_recipes_count(self, obj):
-        """Метод получения количества рецептов автора."""
+        '''Метод получения количества рецептов автора.'''
         return Recipe.objects.filter(author=obj.author).count()
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
-    """Сериализатор для списка покупок."""
+    '''Сериализатор для списка покупок.'''
 
     class Meta:
         model = ShoppingCart
@@ -240,7 +242,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializerDetail(serializers.ModelSerializer):
-    """Сериализатор модели Recipe по ID."""
+    '''Сериализатор модели Recipe по ID.'''
 
     ingredients = IngredientSerializer(many=True)
     tags = TagSerializer(many=True)
@@ -257,7 +259,7 @@ class RecipeSerializerDetail(serializers.ModelSerializer):
         ]
 
     def get_is_favorited(self, obj):
-        """Метод проверки рецепта в избранном у текущего пользователя."""
+        '''Метод проверки рецепта в избранном у текущего пользователя.'''
 
         request_user = self.context.get('request').user
         if request_user.is_authenticated:
@@ -267,7 +269,7 @@ class RecipeSerializerDetail(serializers.ModelSerializer):
         return False
 
     def get_is_in_shopping_cart(self, obj):
-        """Метод проверки рецепта в списке покупок у текущего пользователя."""
+        '''Метод проверки рецепта в списке покупок у текущего пользователя.'''
 
         request_user = self.context.get('request').user
         if request_user.is_authenticated:
