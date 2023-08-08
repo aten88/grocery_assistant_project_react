@@ -96,6 +96,13 @@ class RecipeSerializer(serializers.ModelSerializer):
             'name', 'text', 'cooking_time'
         ]
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['tags'] = TagSerializer(
+            instance.tags.all(), many=True
+        ).data
+        return representation
+
     def create(self, validated_data):
         '''Метод создания рецепта.'''
         ingredients_data = validated_data.pop('recipe_ingredients_set')
@@ -179,10 +186,10 @@ class ShortListRecipeSerializer(serializers.ModelSerializer):
 
 class SubscriptionSerialiazer(serializers.ModelSerializer):
     '''Сериализатор модели подписок.'''
-    email = serializers.EmailField(source='author.email')
-    username = serializers.CharField(source='author.username')
-    first_name = serializers.CharField(source='author.first_name')
-    last_name = serializers.CharField(source='author.last_name')
+    email = serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
+    first_name = serializers.SerializerMethodField()
+    last_name = serializers.SerializerMethodField()
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
@@ -193,6 +200,22 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
             'email', 'id', 'username', 'first_name', 'last_name',
             'is_subscribed', 'recipes', 'recipes_count'
         ]
+
+    def get_email(self, obj):
+        '''Метод получения email автора.'''
+        return obj.author.email
+
+    def get_username(self, obj):
+        '''Метод получения username автора.'''
+        return obj.author.username
+
+    def get_first_name(self, obj):
+        '''Метод получения имени автора.'''
+        return obj.author.first_name
+
+    def get_last_name(self, obj):
+        '''Метод получения фамилии автора.'''
+        return obj.author.last_name
 
     def get_is_subscribed(self, obj):
         '''Метод проверки подписки юзера.'''
