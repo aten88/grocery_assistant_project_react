@@ -2,6 +2,7 @@ import base64
 
 from django.core.files.base import ContentFile
 from django.contrib.auth.models import User
+from django.db import transaction
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
@@ -97,24 +98,35 @@ class RecipeSerializer(serializers.ModelSerializer):
         ]
 
     def to_representation(self, instance):
+        '''Метод переопределения данных.'''
         representation = super().to_representation(instance)
         representation['tags'] = TagSerializer(
             instance.tags.all(), many=True
         ).data
         return representation
 
-    def create(self, validated_data):
-        '''Метод создания рецепта.'''
-        ingredients_data = validated_data.pop('recipe_ingredients_set')
-        tags = validated_data.pop('tags')
-        recipe = Recipe.objects.create(**validated_data)
-        recipe.tags.add(*tags)
-        for ingredient_data in ingredients_data:
-            RecipeIngredient.objects.create(
+    def create_recipe_ingredients(self, recipe, ingredients_data):
+        '''Метод оптимизации создания обьектов'''
+        recipe_ingredients = [
+            RecipeIngredient(
                 recipe=recipe,
                 ingredient_id=ingredient_data['ingredient']['id'],
                 amount=ingredient_data['amount']
             )
+            for ingredient_data in ingredients_data
+        ]
+        RecipeIngredient.objects.bulk_create(recipe_ingredients)
+
+    def create(self, validated_data):
+        '''Метод создания рецепта.'''
+        ingredients_data = validated_data.pop('recipe_ingredients_set')
+        tags = validated_data.pop('tags')
+
+        with transaction.atomic():
+            recipe = Recipe.objects.create(**validated_data)
+            recipe.tags.add(*tags)
+            self.create_recipe_ingredients(recipe, ingredients_data)
+
         return recipe
 
     def update(self, recipe, validated_data):
@@ -129,15 +141,13 @@ class RecipeSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
 
         ingredients_data = validated_data.get('recipe_ingredients_set', [])
-        RecipeIngredient.objects.filter(recipe=recipe).delete()
-        for ingredient_data in ingredients_data:
-            RecipeIngredient.objects.create(
-                recipe=recipe,
-                ingredient_id=ingredient_data['ingredient']['id'],
-                amount=ingredient_data['amount']
-            )
 
-        recipe.save()
+        with transaction.atomic():
+            RecipeIngredient.objects.filter(recipe=recipe).delete()
+            self.create_recipe_ingredients(recipe, ingredients_data)
+
+            recipe.save()
+
         return recipe
 
 
