@@ -67,7 +67,8 @@ class Ingredient(models.Model):
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=['name', 'measurement_unit'], name='unique_ingredient'
+                fields=['name', 'measurement_unit'],
+                name='unique_ingredient'
             )
         ]
         verbose_name = 'Ингредиент'
@@ -189,7 +190,8 @@ class Favorite(models.Model):
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=['user', 'recipe'], name='unique_favorite'
+                fields=['user', 'recipe'],
+                name='unique_favorite'
             )
         ]
         verbose_name = 'Избранное'
@@ -226,7 +228,8 @@ class Subscription(models.Model):
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=['author', 'user'], name='unique_subscription'
+                fields=['author', 'user'],
+                name='unique_subscription'
             )
         ]
         verbose_name = 'Подписка'
@@ -262,7 +265,8 @@ class ShoppingCart(models.Model):
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=['user', 'recipe'], name='unique_shopping_cart'
+                fields=['user', 'recipe'],
+                name='unique_shopping_cart'
             )
         ]
         verbose_name = 'Список покупок'
