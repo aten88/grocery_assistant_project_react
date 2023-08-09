@@ -106,7 +106,7 @@ class AddFavoriteView(APIView):
             )
         if Favorite.objects.filter(user=request.user, recipe=recipe).exists():
             return Response(
-                'Рецепт уже в избранном',
+                'Данный рецепт уже добавлен в избранное',
                 status=status.HTTP_400_BAD_REQUEST
             )
         Favorite(user=request.user, recipe=recipe).save()
