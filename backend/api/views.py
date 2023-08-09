@@ -14,8 +14,8 @@ from rest_framework.generics import (
 from rest_framework.pagination import PageNumberPagination
 
 from recipes.models import (
-    Tag, Ingredient, Recipe, RecipeIngredient,
-    Favorite, Subscription, ShoppingCart
+    Tag, Ingredient, Recipe, Favorite,
+    Subscription, ShoppingCart
 )
 from .serializers import (
     TagSerializer, IngredientSerializer, RecipeSerializer,
@@ -26,6 +26,7 @@ from .serializers import (
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrReadOnly
 from .filters import IngredientFilter, RecipeFilter
+from .utils import gen_shopping_list
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -167,22 +168,8 @@ class DownloadShoppingCart(viewsets.ViewSet):
 
     def list(self, request):
         '''Метод для обработки Get запросов.'''
-        ingredients = {}
-        for item in ShoppingCart.objects.filter(user=request.user):
-            recipe = item.recipe
-            for recipe_ingredient in RecipeIngredient.objects.filter(
-                recipe=recipe
-            ):
-                ingredient = recipe_ingredient.ingredient
-                ingredient_name = ingredient.name
-                ingredient_amount = recipe_ingredient.amount
-                ingredient_measurement_unit = ingredient.measurement_unit
 
-                key = f'{ingredient_name} ({ingredient_measurement_unit})'
-                if key in ingredients:
-                    ingredients[key] += ingredient_amount
-                else:
-                    ingredients[key] = ingredient_amount
+        ingredients = gen_shopping_list(request.user)
 
         file_content = '\n'.join(
             [f'{ingredient} — {amount}'
