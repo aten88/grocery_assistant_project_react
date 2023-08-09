@@ -19,7 +19,7 @@ from recipes.models import (
 )
 from .serializers import (
     TagSerializer, IngredientSerializer, RecipeSerializer,
-    SubscriptionSerialiazer, FavoriteRecipeSerializer,
+    SubscriptionSerialiazer, FavoriteSerializer,
     ShoppingCartSerializer, UserSerializer, UserDetailSerializer,
     RecipeSerializerDetail,
 )
@@ -109,12 +109,12 @@ class AddFavoriteView(APIView):
                 'Данный рецепт уже добавлен в избранное',
                 status=status.HTTP_400_BAD_REQUEST
             )
-        Favorite(user=request.user, recipe=recipe).save()
-        serializer = FavoriteRecipeSerializer(recipe)
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED
-        )
+        favorite_data = {'user': request.user.id, 'recipe': recipe.id}
+        serializer = FavoriteSerializer(data=favorite_data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id):
         '''Метод удаления рецепта из избранного.'''
@@ -140,15 +140,12 @@ class AddToShoppingCart(APIView):
                 'Рецепт уже добавлен в список покупок.',
                 status=status.HTTP_400_BAD_REQUEST
             )
-        ShoppingCart(user=user, recipe=recipe).save()
-        serializer = ShoppingCartSerializer(
-            ShoppingCart(user=user, recipe=recipe)
-        )
-        serializer = FavoriteRecipeSerializer(recipe)
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED
-        )
+        cart_data = {'user': user.id, 'recipe': recipe.id}
+        serializer = ShoppingCartSerializer(data=cart_data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id):
         '''Метод удаления рецепта из списка покупок.'''

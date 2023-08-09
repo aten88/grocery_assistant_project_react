@@ -164,6 +164,12 @@ class RecipeSerializer(serializers.ModelSerializer):
         return Favorite.objects.filter(user=user, recipe=recipe).exists()
 
 
+class FavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorite
+        fields = ['user', 'recipe']
+
+
 class FavoriteRecipeSerializer(serializers.ModelSerializer):
     '''Сериализатор для отображения избранного рецепта.'''
 
