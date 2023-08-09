@@ -270,7 +270,7 @@ class UserSubscriptionListAPIView(ListAPIView):
 
     def get_queryset(self):
         '''Метод получения подписок юзера.'''
-        return Subscription.objects.filter(user=self.request.user)
+        return self.request.user.follower.all()
 
     def post(self, request, id):
         '''Метод создания подписки по id.'''
