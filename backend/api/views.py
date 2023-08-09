@@ -96,18 +96,14 @@ class AddFavoriteView(APIView):
 
     def post(self, request, id):
         '''Метод добавления рецепта в избранное.'''
-        try:
-            recipe = Recipe.objects.get(id=id)
-        except Recipe.DoesNotExist:
-            return Response(
-                'Рецепт не найден',
-                status=status.HTTP_404_NOT_FOUND
-            )
+        recipe = get_object_or_404(Recipe, id=id)
+
         if recipe.author == request.user:
             return Response(
-                'Вы не можете добавить свой рецепт в избранное.'
+                'Вы не можете добавить свой рецепт в избранное.',
+                status=status.HTTP_400_BAD_REQUEST
             )
-        if Favorite.objects.filter(user=request.user, recipe=recipe):
+        if Favorite.objects.filter(user=request.user, recipe=recipe).exists():
             return Response(
                 'Рецепт уже в избранном',
                 status=status.HTTP_400_BAD_REQUEST
@@ -121,13 +117,7 @@ class AddFavoriteView(APIView):
 
     def delete(self, request, id):
         '''Метод удаления рецепта из избранного.'''
-        try:
-            Favorite.objects.get(user=request.user, recipe_id=id).delete()
-        except Favorite.DoesNotExist:
-            return Response(
-                'Рецепт не найден в избранном',
-                status=status.HTTP_404_NOT_FOUND
-            )
+        get_object_or_404(Favorite, user=request.user, recipe_id=id).delete()
         return Response(
             'Рецепт успешно удален из избранного',
             status=status.HTTP_204_NO_CONTENT
@@ -139,15 +129,12 @@ class AddToShoppingCart(APIView):
 
     def post(self, request, id):
         '''Метод для добавления рецепта в список покупок.'''
-        try:
-            recipe = Recipe.objects.get(id=id)
-            user = request.user
-        except Recipe.DoesNotExist:
-            return Response(
-                'Рецепт не найден.',
-                status=status.HTTP_404_NOT_FOUND
-            )
-        if ShoppingCart.objects.filter(user=request.user, recipe=recipe):
+        recipe = get_object_or_404(Recipe, id=id)
+        user = request.user
+        if ShoppingCart.objects.filter(
+            user=request.user,
+            recipe=recipe
+        ).exists():
             return Response(
                 'Рецепт уже добавлен в список покупок.',
                 status=status.HTTP_400_BAD_REQUEST
@@ -164,13 +151,9 @@ class AddToShoppingCart(APIView):
 
     def delete(self, request, id):
         '''Метод удаления рецепта из списка покупок.'''
-        try:
-            ShoppingCart.objects.get(user=request.user, recipe_id=id).delete()
-        except ShoppingCart.DoesNotExist:
-            return Response(
-                'Рецепт не добавлен в список покупок.',
-                status=status.HTTP_404_NOT_FOUND
-            )
+        get_object_or_404(
+            ShoppingCart, user=request.user, recipe_id=id
+        ).delete()
         return Response(
             'Рецепт удален из списка покупок.',
             status=status.HTTP_204_NO_CONTENT
