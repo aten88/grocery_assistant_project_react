@@ -209,10 +209,10 @@ class ShortListRecipeSerializer(serializers.ModelSerializer):
 
 class SubscriptionSerialiazer(serializers.ModelSerializer):
     '''Сериализатор модели подписок.'''
-    email = serializers.SerializerMethodField()
-    username = serializers.SerializerMethodField()
-    first_name = serializers.SerializerMethodField()
-    last_name = serializers.SerializerMethodField()
+    email = serializers.EmailField(source='author.email')
+    username = serializers.CharField(source='author.username')
+    first_name = serializers.CharField(source='author.first_name')
+    last_name = serializers.CharField(source='author.last_name')
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
@@ -223,22 +223,6 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
             'email', 'id', 'username', 'first_name', 'last_name',
             'is_subscribed', 'recipes', 'recipes_count'
         ]
-
-    def get_email(self, obj):
-        '''Метод получения email автора.'''
-        return obj.author.email
-
-    def get_username(self, obj):
-        '''Метод получения username автора.'''
-        return obj.author.username
-
-    def get_first_name(self, obj):
-        '''Метод получения имени автора.'''
-        return obj.author.first_name
-
-    def get_last_name(self, obj):
-        '''Метод получения фамилии автора.'''
-        return obj.author.last_name
 
     def get_is_subscribed(self, obj):
         '''Метод проверки подписки юзера.'''
