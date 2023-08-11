@@ -21,7 +21,7 @@ from .serializers import (
     TagSerializer, IngredientSerializer, RecipeSerializer,
     SubscriptionSerialiazer, FavoriteSerializer,
     ShoppingCartSerializer, UserSerializer, UserDetailSerializer,
-    RecipeSerializerDetail,
+    RecipeSerializerDetail, SubscriptionCreateSerializer,
 )
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrReadOnly
@@ -258,31 +258,13 @@ class UserSubscriptionListAPIView(ListAPIView):
 
     def post(self, request, id):
         '''Метод создания подписки по id.'''
-
-        user_to_subscribe = get_object_or_404(User, id=id)
-
-        if user_to_subscribe == request.user:
-            return Response(
-                'Вы не можете подписаться на себя.',
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        if Subscription.objects.filter(
-            user=request.user, author=user_to_subscribe
-        ).exists():
-            return Response(
-                'Вы уже подписаны на автора',
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        Subscription.objects.create(
-            user=request.user, author=user_to_subscribe
+        serializer = SubscriptionCreateSerializer(
+            data={'id': id}, context={'request': request}
         )
-        author_data = UserSerializer(user_to_subscribe).data
-        recipes = Recipe.objects.filter(author=user_to_subscribe)
-        recipe_data = RecipeSerializer(recipes, many=True).data
-        author_data['is_subscribed'] = True
-        author_data['recipes'] = recipe_data
-        author_data['recipes_count'] = len(recipe_data)
-        return Response(author_data, status=status.HTTP_201_CREATED)
+        serializer.is_valid(raise_exception=True)
+        response_data = serializer.save()
+
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, id):
         '''Метод удаления подписки по id.'''

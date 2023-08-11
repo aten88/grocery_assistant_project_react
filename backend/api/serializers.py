@@ -3,6 +3,7 @@ import base64
 from django.core.files.base import ContentFile
 from django.contrib.auth.models import User
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
@@ -295,3 +296,39 @@ class RecipeSerializerDetail(serializers.ModelSerializer):
                 recipe=obj, user=request_user
             ).exists()
         return False
+
+
+class SubscriptionCreateSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+
+    def create(self, validated_data):
+        """Метод создания подписки."""
+        request_user = self.context['request'].user
+        user_to_subscribe = get_object_or_404(User, id=validated_data['id'])
+
+        if user_to_subscribe == request_user:
+            raise serializers.ValidationError(
+                "Вы не можете подписаться на себя."
+            )
+
+        if Subscription.objects.filter(
+            user=request_user, author=user_to_subscribe
+        ).exists():
+            raise serializers.ValidationError("Вы уже подписаны на автора.")
+
+        Subscription.objects.create(
+            user=request_user,
+            author=user_to_subscribe
+        )
+
+        author_data = {
+            'email': user_to_subscribe.email,
+            'username': user_to_subscribe.username,
+            'first_name': user_to_subscribe.first_name,
+            'last_name': user_to_subscribe.last_name,
+            'is_subscribed': True,
+            'recipes': [],
+            'recipes_count': 0
+        }
+
+        return author_data
