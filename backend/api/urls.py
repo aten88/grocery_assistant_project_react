@@ -4,7 +4,7 @@ from djoser.views import TokenCreateView, TokenDestroyView
 
 from .views import (
     TagViewSet, IngredientViewSet, RecipeViewSet,
-    RecipeViewSetDetail, AddFavoriteView, UserSubscriptionListAPIView,
+    AddFavoriteView, UserSubscriptionListAPIView,
     UserViewSet, UserDetailView, CurrentUserViewSet,
     ChangePasswordViewSet, AddToShoppingCart, DownloadShoppingCart
 )
@@ -41,11 +41,6 @@ urlpatterns = [
         'users/<int:id>/subscribe/',
         UserSubscriptionListAPIView.as_view(),
         name='subscribe-unsubscribe'
-    ),
-    path(
-        'recipes/<int:id>/', RecipeViewSetDetail.as_view(
-            {'get': 'retrieve', 'patch': 'partial_update', 'delete': 'destroy'}
-        )
     ),
     path('recipes/<int:id>/favorite/', AddFavoriteView.as_view()),
     path('recipes/<int:id>/shopping_cart/', AddToShoppingCart.as_view()),
