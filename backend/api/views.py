@@ -62,9 +62,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         '''Метод определения сериализатора.'''
         if (
-            self.action == 'retrieve' or
-            self.action == 'update' or
-            self.action == 'partial_update'
+            self.action == 'retrieve'
+            or self.action == 'update'
+            or self.action == 'partial_update'
         ):
             return RecipeSerializerDetail
         return RecipeSerializer

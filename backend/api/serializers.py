@@ -202,8 +202,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
         return (
             request_user.is_authenticated
             and Subscription.objects.filter(
-             author=obj.id, user=request_user
-            ).exists()
+                author=obj.id, user=request_user
+                ).exists()
         )
 
 
