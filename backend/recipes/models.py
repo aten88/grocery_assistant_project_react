@@ -6,26 +6,23 @@ from django.core.validators import (
 )
 from django.core.exceptions import ValidationError
 
-from .constants import MIN_COOKING_TIME, MAX_COOKING_TIME
-
-
-def unique_color_validator(value):
-    '''Кастомный валидатор для проверки уникальности HEX-кода цвета.'''
-
-    if Tag.objects.filter(color=value).exists():
-        raise ValidationError('HEX-код цвета должен быть уникальным.')
+from .constants import (
+    MIN_COOKING_TIME, MAX_COOKING_TIME, MAX_LENGTH, MAX_LENGTH_II,
+    LIMIT_DIGIT_ONE, LIMIT_DIGIT_TWO, LIMIT_DIGIT_THREE, LIMIT_DIGIT_FOUR
+)
+from .validators import unique_color_validator
 
 
 class Tag(models.Model):
     '''Модель тега.'''
 
     name = models.CharField(
-        max_length=200,
+        max_length=MAX_LENGTH_II,
         verbose_name='Название Тега.',
         unique=True
     )
     color = models.CharField(
-        max_length=7,
+        max_length=LIMIT_DIGIT_THREE,
         verbose_name='HEX-код цвета.',
         unique=True,
         validators=[
@@ -39,7 +36,7 @@ class Tag(models.Model):
         help_text='Введите HEX-код цвета в формате #RRGGBB.'
     )
     slug = models.SlugField(
-        max_length=100,
+        max_length=MAX_LENGTH,
         unique=True,
         verbose_name='Слаг.'
     )
@@ -56,11 +53,11 @@ class Ingredient(models.Model):
     '''Модель ингредиента.'''
 
     name = models.CharField(
-        max_length=200,
+        max_length=MAX_LENGTH_II,
         verbose_name='Название ингредиента'
     )
     measurement_unit = models.CharField(
-        max_length=50,
+        max_length=LIMIT_DIGIT_FOUR,
         verbose_name='Единица измерения'
     )
 
@@ -87,7 +84,7 @@ class Recipe(models.Model):
         verbose_name='Автор рецепта.'
     )
     name = models.CharField(
-        max_length=200,
+        max_length=MAX_LENGTH_II,
         verbose_name='Название рецепта.',
         unique=True
     )
@@ -152,8 +149,8 @@ class RecipeIngredient(models.Model):
         verbose_name='Ингредиент'
     )
     amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
+        max_digits=LIMIT_DIGIT_ONE,
+        decimal_places=LIMIT_DIGIT_TWO,
         verbose_name='Количество ингредиента'
     )
 
