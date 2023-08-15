@@ -21,20 +21,15 @@ class RecipeFilter(FilterSet):
         field_name='tags__slug',
         to_field_name='slug')
     is_favorited = filters.NumberFilter(
-        method='is_recipe_in_favorites_filter')
+        method='common_filter',
+        field_name='favorites__user_id')
     is_in_shopping_cart = filters.NumberFilter(
-        method='is_recipe_in_shoppingcart_filter')
+        method='common_filter',
+        field_name='shopping_recipe__user_id')
 
-    def is_recipe_in_favorites_filter(self, queryset, name, value):
+    def common_filter(self, queryset, name, value):
         if value:
-            return queryset.filter(favorites__user_id=self.request.user)
-        return queryset
-
-    def is_recipe_in_shoppingcart_filter(self, queryset, name, value):
-        if value:
-            return queryset.filter(
-                shopping_recipe__user_id=self.request.user.id
-            )
+            return queryset.filter(**{name: self.request.user})
         return queryset
 
     class Meta:
