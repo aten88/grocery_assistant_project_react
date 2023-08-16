@@ -176,12 +176,12 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
         if user == recipe.author:
             raise serializers.ValidationError(
-                "Вы не можете добавить свой рецепт в избранное."
+                'Вы не можете добавить свой рецепт в избранное.'
             )
 
         if Favorite.objects.filter(user=user, recipe=recipe).exists():
             raise serializers.ValidationError(
-                "Данный рецепт уже добавлен в избранное."
+                'Данный рецепт уже добавлен в избранное.'
             )
 
         return data
@@ -275,6 +275,17 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         model = ShoppingCart
         fields = ['user', 'recipe']
 
+    def validate(self, data):
+        '''Метод обновления списка покупок.'''
+        user = self.context['request'].user
+        recipe = data['recipe']
+
+        if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
+            raise serializers.ValidationError(
+                "Рецепт уже добавлен в список покупок."
+            )
+        return data
+
 
 class RecipeSerializerDetail(serializers.ModelSerializer):
     '''Сериализатор модели Recipe по ID.'''
@@ -318,7 +329,7 @@ class SubscriptionCreateSerializer(serializers.Serializer):
     id = serializers.IntegerField()
 
     def create(self, validated_data):
-        """Метод создания подписки."""
+        '''Метод создания подписки.'''
         request_user = self.context['request'].user
         user_to_subscribe = get_object_or_404(User, id=validated_data['id'])
 
@@ -348,3 +359,22 @@ class SubscriptionCreateSerializer(serializers.Serializer):
         }
 
         return author_data
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    '''Сериализатор изменения пароля.'''
+    current_password = serializers.CharField(write_only=True, required=True)
+    new_password = serializers.CharField(write_only=True, required=True)
+
+    def update(self, instance, validated_data):
+        '''Метод обновления пароля.'''
+        current_password = validated_data.get('current_password')
+        new_password = validated_data.get('new_password')
+
+        if current_password == new_password:
+            raise serializers.ValidationError(
+                'Новый пароль должен отличаться от старого.'
+            )
+        instance.set_password(new_password)
+        instance.save()
+        return instance

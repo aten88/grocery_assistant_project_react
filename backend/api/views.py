@@ -22,6 +22,7 @@ from .serializers import (
     SubscriptionSerialiazer, FavoriteSerializer,
     ShoppingCartSerializer, UserSerializer, UserDetailSerializer,
     RecipeSerializerDetail, SubscriptionCreateSerializer,
+    ChangePasswordSerializer,
 )
 from .pagination import CustomPagination
 from .filters import IngredientFilter, RecipeFilter
@@ -116,17 +117,10 @@ class AddToShoppingCart(APIView):
     def post(self, request, id):
         '''Метод для добавления рецепта в список покупок.'''
         recipe = get_object_or_404(Recipe, id=id)
-        user = request.user
-        if ShoppingCart.objects.filter(
-            user=request.user,
-            recipe=recipe
-        ).exists():
-            return Response(
-                'Рецепт уже добавлен в список покупок.',
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        cart_data = {'user': user.id, 'recipe': recipe.id}
-        serializer = ShoppingCartSerializer(data=cart_data)
+        cart_data = {'user': request.user.id, 'recipe': recipe.id}
+        serializer = ShoppingCartSerializer(
+            data=cart_data, context={'request': request}
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -209,25 +203,21 @@ class ChangePasswordViewSet(viewsets.ViewSet):
 
     def set_password(self, request):
         '''Метод проверки и смены пароля.'''
-        user = request.user
-        new_password = request.data.get('new_password')
-        current_password = request.data.get('current_password')
-
-        if not (
-            user.check_password(current_password)
-            and current_password != new_password and new_password is not None
-        ):
-            return Response(
-                {'detail': 'Неверный пароль'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        user.set_password(new_password)
-        user.save()
-
-        return Response(
-            {'detail': 'Пароль успешно изменен'},
-            status=status.HTTP_204_NO_CONTENT
+        serializer = ChangePasswordSerializer(
+            data=request.data,  context={'request': request}
         )
+
+        if serializer.is_valid():
+            serializer.update(request.user, serializer.validated_data)
+
+            return Response(
+                {'detail': 'Пароль успешно изменен'},
+                status=status.HTTP_204_NO_CONTENT
+            )
+        else:
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class UserSubscriptionListAPIView(ListAPIView):
