@@ -170,6 +170,22 @@ class FavoriteSerializer(serializers.ModelSerializer):
         model = Favorite
         fields = ['user', 'recipe']
 
+    def validate(self, data):
+        user = self.context['request'].user
+        recipe = data['recipe']
+
+        if user == recipe.author:
+            raise serializers.ValidationError(
+                "Вы не можете добавить свой рецепт в избранное."
+            )
+
+        if Favorite.objects.filter(user=user, recipe=recipe).exists():
+            raise serializers.ValidationError(
+                "Данный рецепт уже добавлен в избранное."
+            )
+
+        return data
+
 
 class FavoriteRecipeSerializer(serializers.ModelSerializer):
     '''Сериализатор для отображения избранного рецепта.'''

@@ -92,19 +92,10 @@ class AddFavoriteView(APIView):
     def post(self, request, id):
         '''Метод добавления рецепта в избранное.'''
         recipe = get_object_or_404(Recipe, id=id)
-
-        if recipe.author == request.user:
-            return Response(
-                'Вы не можете добавить свой рецепт в избранное.',
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        if Favorite.objects.filter(user=request.user, recipe=recipe).exists():
-            return Response(
-                'Данный рецепт уже добавлен в избранное',
-                status=status.HTTP_400_BAD_REQUEST
-            )
         favorite_data = {'user': request.user.id, 'recipe': recipe.id}
-        serializer = FavoriteSerializer(data=favorite_data)
+        serializer = FavoriteSerializer(
+            data=favorite_data, context={'request': request}
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -263,13 +254,11 @@ class UserSubscriptionListAPIView(ListAPIView):
     def delete(self, request, id):
         '''Метод удаления подписки по id.'''
         user_to_unsubscribe = get_object_or_404(User, id=id)
-
-        if get_object_or_404(
+        subscription = get_object_or_404(
             Subscription, user=request.user, author=user_to_unsubscribe
-        ):
-            get_object_or_404(
-                Subscription, user=request.user, author=user_to_unsubscribe
-            ).delete()
+        )
+        if subscription:
+            subscription.delete()
             return Response(
                 'Вы отписались от автора.', status=status.HTTP_204_NO_CONTENT
             )
