@@ -1,14 +1,13 @@
-from recipes. models import ShoppingCart, RecipeIngredient
-
-
 def gen_shopping_list(user):
     '''Метод формирования списка покупок.'''
     ingredients = {}
-    for item in ShoppingCart.objects.filter(user=user):
-        recipe = item.recipe
-        for recipe_ingredient in RecipeIngredient.objects.filter(
-            recipe=recipe
-        ):
+
+    shopping_carts = user.shopping_user.all()
+
+    for cart_item in shopping_carts:
+        recipe = cart_item.recipe
+
+        for recipe_ingredient in recipe.recipe_ingredients_set.all():
             ingredient = recipe_ingredient.ingredient
             ingredient_name = ingredient.name
             ingredient_amount = recipe_ingredient.amount
