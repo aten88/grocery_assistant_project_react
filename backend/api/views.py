@@ -169,7 +169,9 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         '''Метод создания нового пользователя.'''
-        serializer = UserSerializer(data=request.data)
+        serializer = UserSerializer(
+            data=request.data, context={'request': request}
+        )
         if serializer.is_valid():
             password = request.data.get('password')
             serializer.save(password=make_password(password))

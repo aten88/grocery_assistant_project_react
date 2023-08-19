@@ -29,12 +29,26 @@ class Base64ImageField(serializers.ImageField):
 class UserSerializer(serializers.ModelSerializer):
     '''Сериализатор модели User.'''
 
+    is_subscribed = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
             'email', 'id', 'username',
             'first_name', 'last_name',
+            'is_subscribed',
         ]
+
+    def get_is_subscribed(self, obj):
+        '''Метод проверки подписки юзера.'''
+
+        request_user = self.context.get('request').user
+        return (
+            request_user.is_authenticated
+            and Subscription.objects.filter(
+                author=obj.id, user=request_user
+            ).exists()
+        )
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -48,11 +62,24 @@ class TagSerializer(serializers.ModelSerializer):
 class IngredientSerializer(serializers.ModelSerializer):
     '''Сериализатор модели Ingredient.'''
 
-    amount = serializers.SerializerMethodField()
-
     class Meta:
         model = Ingredient
-        fields = ['id', 'name', 'measurement_unit', 'amount', ]
+        fields = ['id', 'name', 'measurement_unit', ]
+
+
+class RecipeIngredientSerializer(serializers.ModelSerializer):
+    '''Сериализатор ингредиентов в рецепте.'''
+
+    id = serializers.IntegerField(source='ingredient.id')
+    name = serializers.CharField(source='ingredient.name')
+    measurement_unit = serializers.CharField(
+        source='ingredient.measurement_unit'
+    )
+    amount = serializers.IntegerField()
+
+    class Meta:
+        model = RecipeIngredient
+        fields = ['id', 'name', 'measurement_unit', 'amount']
 
     def get_amount(self, ingredient):
         ''''Метод получения количества ингредиента.'''
@@ -65,17 +92,6 @@ class IngredientSerializer(serializers.ModelSerializer):
         except RecipeIngredient.DoesNotExist:
             pass
         return None
-
-
-class RecipeIngredientSerializer(serializers.ModelSerializer):
-    '''Сериализатор ингредиеентов в рецепте.'''
-
-    id = serializers.IntegerField(source='ingredient.id')
-    amount = serializers.IntegerField()
-
-    class Meta:
-        model = RecipeIngredient
-        fields = ['id', 'amount']
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -96,9 +112,9 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = [
-            'id', 'author', 'ingredients', 'tags', 'image',
-            'name', 'text', 'cooking_time', 'is_in_shopping_cart',
-            'is_favorited',
+            'id', 'tags', 'author', 'ingredients',
+            'is_favorited', 'is_in_shopping_cart',
+            'name', 'image', 'text', 'cooking_time',
         ]
 
     def to_representation(self, instance):
@@ -290,7 +306,9 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 class RecipeSerializerDetail(serializers.ModelSerializer):
     '''Сериализатор модели Recipe по ID.'''
 
-    ingredients = IngredientSerializer(many=True)
+    ingredients = RecipeIngredientSerializer(
+        many=True, source='recipe_ingredients_set'
+    )
     tags = TagSerializer(many=True)
     author = UserDetailSerializer()
     is_favorited = serializers.SerializerMethodField()
