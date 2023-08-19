@@ -21,8 +21,7 @@ from .serializers import (
     TagSerializer, IngredientSerializer, RecipeSerializer,
     SubscriptionSerialiazer, FavoriteSerializer,
     ShoppingCartSerializer, UserSerializer, UserDetailSerializer,
-    RecipeSerializerDetail, SubscriptionCreateSerializer,
-    ChangePasswordSerializer,
+    SubscriptionCreateSerializer, ChangePasswordSerializer,
 )
 from .pagination import CustomPagination
 from .filters import IngredientFilter, RecipeFilter
@@ -60,21 +59,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
-    def get_serializer_class(self):
-        '''Метод определения сериализатора.'''
-        if (
-            self.action == 'retrieve'
-            or self.action == 'update'
-            or self.action == 'partial_update'
-        ):
-            return RecipeSerializerDetail
-        return RecipeSerializer
+    def create(self, request, *args, **kwargs):
+        '''Метод создания нового рецепта.'''
+        serializer = RecipeSerializer(
+            data=request.data, context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def partial_update(self, request, *args, **kwargs):
         '''Метод обновления данных в рецептe по id.'''
         instance = self.get_object()
-        serializer = RecipeSerializerDetail(
-            instance, data=request.data, partial=True
+        serializer = RecipeSerializer(
+            instance, data=request.data, context={'request': request},
+            partial=True
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
