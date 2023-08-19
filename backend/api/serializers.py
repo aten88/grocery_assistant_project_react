@@ -11,6 +11,7 @@ from recipes.models import (
     Tag, Ingredient, RecipeIngredient,
     Recipe, Subscription, ShoppingCart, Favorite
 )
+from recipes.constants import LIMIT_DIGIT_V, MAX_LENGTH_III
 
 
 class Base64ImageField(serializers.ImageField):
@@ -214,9 +215,9 @@ class FavoriteRecipeSerializer(serializers.ModelSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     '''Сериализатор модели User по id.'''
 
-    email = serializers.EmailField(required=True, max_length=254)
-    first_name = serializers.CharField(required=True, max_length=150)
-    last_name = serializers.CharField(required=True, max_length=150)
+    email = serializers.EmailField(required=True, max_length=MAX_LENGTH_III)
+    first_name = serializers.CharField(required=True, max_length=LIMIT_DIGIT_V)
+    last_name = serializers.CharField(required=True, max_length=LIMIT_DIGIT_V)
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -233,9 +234,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
         request_user = self.context.get('request').user
         return (
             request_user.is_authenticated
-            and Subscription.objects.filter(
-                author=obj.id, user=request_user
-            ).exists()
+            and obj.follow.filter(user=request_user).exists()
         )
 
 
@@ -268,9 +267,7 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
 
         request_user = self.context.get('request').user
         if request_user.is_authenticated:
-            return Subscription.objects.filter(
-                author=obj.author, user=request_user
-            ).exists()
+            return obj.author.follow.filter(user=request_user).exists()
         return False
 
     def get_recipes(self, obj):

@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 
 from .constants import (
     MIN_COOKING_TIME, MAX_COOKING_TIME, MAX_LENGTH, MAX_LENGTH_II,
-    LIMIT_DIGIT_ONE, LIMIT_DIGIT_TWO, LIMIT_DIGIT_THREE, LIMIT_DIGIT_FOUR
+    LIMIT_DIGIT_I, LIMIT_DIGIT_II, LIMIT_DIGIT_III, LIMIT_DIGIT_IV
 )
 from .validators import unique_color_validator
 
@@ -22,7 +22,7 @@ class Tag(models.Model):
         unique=True
     )
     color = models.CharField(
-        max_length=LIMIT_DIGIT_THREE,
+        max_length=LIMIT_DIGIT_III,
         verbose_name='HEX-код цвета.',
         unique=True,
         validators=[
@@ -57,7 +57,7 @@ class Ingredient(models.Model):
         verbose_name='Название ингредиента'
     )
     measurement_unit = models.CharField(
-        max_length=LIMIT_DIGIT_FOUR,
+        max_length=LIMIT_DIGIT_IV,
         verbose_name='Единица измерения'
     )
 
@@ -149,8 +149,8 @@ class RecipeIngredient(models.Model):
         verbose_name='Ингредиент'
     )
     amount = models.DecimalField(
-        max_digits=LIMIT_DIGIT_ONE,
-        decimal_places=LIMIT_DIGIT_TWO,
+        max_digits=LIMIT_DIGIT_I,
+        decimal_places=LIMIT_DIGIT_II,
         verbose_name='Количество ингредиента'
     )
 
