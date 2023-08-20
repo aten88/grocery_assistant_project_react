@@ -1,7 +1,6 @@
 import base64
 
 from django.core.files.base import ContentFile
-from django.contrib.auth.models import User
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
@@ -12,6 +11,7 @@ from recipes.models import (
     Recipe, Subscription, ShoppingCart, Favorite
 )
 from recipes.constants import LIMIT_DIGIT_V, MAX_LENGTH_III
+from users.models import CustomUser
 
 
 class Base64ImageField(serializers.ImageField):
@@ -33,7 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = [
             'email', 'id', 'username',
             'first_name', 'last_name',
@@ -221,7 +221,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = [
             'email', 'id', 'username',
             'first_name', 'last_name',
@@ -306,7 +306,9 @@ class SubscriptionCreateSerializer(serializers.Serializer):
     def create(self, validated_data):
         '''Метод создания подписки.'''
         request_user = self.context['request'].user
-        user_to_subscribe = get_object_or_404(User, id=validated_data['id'])
+        user_to_subscribe = get_object_or_404(
+            CustomUser, id=validated_data['id']
+        )
 
         if user_to_subscribe == request_user:
             raise serializers.ValidationError(

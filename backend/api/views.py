@@ -1,5 +1,4 @@
 from django.http import HttpResponse
-from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status
@@ -26,6 +25,7 @@ from .serializers import (
 from .pagination import CustomPagination
 from .filters import IngredientFilter, RecipeFilter
 from .utils import gen_shopping_list
+from users.models import CustomUser
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -161,7 +161,7 @@ class DownloadShoppingCart(viewsets.ViewSet):
 
 class UserViewSet(viewsets.ModelViewSet):
     '''Вьюсет модели User.'''
-    queryset = User.objects.order_by('-date_joined').all()
+    queryset = CustomUser.objects.order_by('-date_joined').all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
     pagination_class = PageNumberPagination
@@ -182,7 +182,7 @@ class UserDetailView(RetrieveAPIView):
     '''Вьюсет для User по id.'''
 
     permission_classes = [AllowAny]
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserDetailSerializer
     lookup_field = 'id'
 
@@ -244,7 +244,7 @@ class UserSubscriptionListAPIView(ListAPIView):
 
     def delete(self, request, id):
         '''Метод удаления подписки по id.'''
-        user_to_unsubscribe = get_object_or_404(User, id=id)
+        user_to_unsubscribe = get_object_or_404(CustomUser, id=id)
         subscription = get_object_or_404(
             Subscription, user=request.user, author=user_to_unsubscribe
         )

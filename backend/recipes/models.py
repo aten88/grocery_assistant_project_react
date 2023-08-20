@@ -1,6 +1,5 @@
 from django.db import models
 from django.db.models import UniqueConstraint
-from django.contrib.auth.models import User
 from django.core.validators import (
     RegexValidator, MinValueValidator, MaxValueValidator
 )
@@ -11,6 +10,7 @@ from .constants import (
     LIMIT_DIGIT_I, LIMIT_DIGIT_II, LIMIT_DIGIT_III, LIMIT_DIGIT_IV
 )
 from .validators import unique_color_validator
+from users.models import CustomUser
 
 
 class Tag(models.Model):
@@ -79,7 +79,7 @@ class Recipe(models.Model):
     '''Модель рецепта.'''
 
     author = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         verbose_name='Автор рецепта.'
     )
@@ -172,7 +172,7 @@ class Favorite(models.Model):
     '''Модель избранного.'''
 
     user = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         verbose_name='Пользователь',
         related_name='favorites'
@@ -210,13 +210,13 @@ class Subscription(models.Model):
     '''Модель подписки на автора.'''
 
     author = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         verbose_name='Автор рецепта',
         related_name='follow'
     )
     user = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         verbose_name='Подписчик',
         related_name='follower'
@@ -247,7 +247,7 @@ class ShoppingCart(models.Model):
     '''Модель списка покупок.'''
 
     user = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name='shopping_user',
         verbose_name='Пользователь'
