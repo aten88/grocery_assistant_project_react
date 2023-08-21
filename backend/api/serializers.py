@@ -10,7 +10,7 @@ from recipes.models import (
     Tag, Ingredient, RecipeIngredient,
     Recipe, Subscription, ShoppingCart, Favorite
 )
-from recipes.constants import LIMIT_DIGIT_V, MAX_LENGTH_III
+from recipes.constants import LIMIT_DIGIT_V, MAX_LENGTH_III, LIMIT_DIGIT_VI
 from users.models import CustomUser
 
 
@@ -272,13 +272,13 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
 
     def get_recipes(self, obj):
         '''Метод получения рецептов автора по подписке.'''
-        recipes = Recipe.objects.filter(author=obj.author)
+        recipes = obj.author.author_recipes.all()[:LIMIT_DIGIT_VI]
         serializer = ShortListRecipeSerializer(recipes, many=True)
         return serializer.data
 
     def get_recipes_count(self, obj):
         '''Метод получения количества рецептов автора.'''
-        return Recipe.objects.filter(author=obj.author).count()
+        return obj.author.author_recipes.count()
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
@@ -293,7 +293,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         recipe = data['recipe']
 
-        if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
+        if user.shopping_user.filter(recipe=recipe).exists():
             raise serializers.ValidationError(
                 "Рецепт уже добавлен в список покупок."
             )
