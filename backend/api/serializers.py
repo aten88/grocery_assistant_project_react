@@ -45,10 +45,8 @@ class UserSerializer(serializers.ModelSerializer):
 
         request_user = self.context.get('request').user
         return (
-            request_user.is_authenticated
-            and Subscription.objects.filter(
-                author=obj.id, user=request_user
-            ).exists()
+            obj.follow.filter(user=request_user).exists() if
+            request_user.is_authenticated else False
         )
 
 
@@ -86,8 +84,8 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
         ''''Метод получения количества ингредиента.'''
         recipe_id = self.context.get('recipe_id')
         try:
-            recipe_ingredient = RecipeIngredient.objects.get(
-                ingredient=ingredient, recipe_id=recipe_id
+            recipe_ingredient = ingredient.recipe_ingredients_set.get(
+                recipe_id=recipe_id
             )
             return recipe_ingredient.amount
         except RecipeIngredient.DoesNotExist:
@@ -174,12 +172,18 @@ class RecipeSerializer(serializers.ModelSerializer):
     def get_is_in_shopping_cart(self, recipe):
         '''Метод проверки списка покупок.'''
         user = self.context.get('request').user
-        return ShoppingCart.objects.filter(user=user, recipe=recipe).exists()
+        return (
+            user.shopping_user.filter(recipe=recipe).exists() if
+            user.is_authenticated else False
+        )
 
     def get_is_favorited(self, recipe):
         '''Метод проверки избранного.'''
         user = self.context.get('request').user
-        return Favorite.objects.filter(user=user, recipe=recipe).exists()
+        return (
+            user.favorites.filter(recipe=recipe).exists() if
+            user.is_authenticated else False
+        )
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -196,7 +200,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
                 'Вы не можете добавить свой рецепт в избранное.'
             )
 
-        if Favorite.objects.filter(user=user, recipe=recipe).exists():
+        if recipe.favorites.filter(user=user).exists():
             raise serializers.ValidationError(
                 'Данный рецепт уже добавлен в избранное.'
             )
@@ -315,9 +319,7 @@ class SubscriptionCreateSerializer(serializers.Serializer):
                 "Вы не можете подписаться на себя."
             )
 
-        if Subscription.objects.filter(
-            user=request_user, author=user_to_subscribe
-        ).exists():
+        if request_user.follow.filter(author=user_to_subscribe).exists():
             raise serializers.ValidationError("Вы уже подписаны на автора.")
 
         Subscription.objects.create(
