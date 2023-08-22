@@ -10,7 +10,7 @@ from recipes.models import (
     Tag, Ingredient, RecipeIngredient,
     Recipe, Subscription, ShoppingCart, Favorite
 )
-from recipes.constants import LIMIT_DIGIT_V, MAX_LENGTH_III, LIMIT_DIGIT_VI
+from recipes.constants import LIMIT_DIGIT_VI
 from users.models import CustomUser
 
 
@@ -206,40 +206,6 @@ class FavoriteSerializer(serializers.ModelSerializer):
             )
 
         return data
-
-
-class FavoriteRecipeSerializer(serializers.ModelSerializer):
-    '''Сериализатор для отображения избранного рецепта.'''
-
-    class Meta:
-        model = Recipe
-        fields = ['id', 'name', 'image', 'cooking_time']
-
-
-class UserDetailSerializer(serializers.ModelSerializer):
-    '''Сериализатор модели User по id.'''
-
-    email = serializers.EmailField(required=True, max_length=MAX_LENGTH_III)
-    first_name = serializers.CharField(required=True, max_length=LIMIT_DIGIT_V)
-    last_name = serializers.CharField(required=True, max_length=LIMIT_DIGIT_V)
-    is_subscribed = serializers.SerializerMethodField()
-
-    class Meta:
-        model = CustomUser
-        fields = [
-            'email', 'id', 'username',
-            'first_name', 'last_name',
-            'is_subscribed'
-        ]
-
-    def get_is_subscribed(self, obj):
-        '''Метод проверки подписки юзера.'''
-
-        request_user = self.context.get('request').user
-        return (
-            request_user.is_authenticated
-            and obj.follow.filter(user=request_user).exists()
-        )
 
 
 class ShortListRecipeSerializer(serializers.ModelSerializer):

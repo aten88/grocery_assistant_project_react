@@ -19,8 +19,8 @@ from recipes.models import (
 from .serializers import (
     TagSerializer, IngredientSerializer, RecipeSerializer,
     SubscriptionSerialiazer, FavoriteSerializer,
-    ShoppingCartSerializer, UserSerializer, UserDetailSerializer,
-    SubscriptionCreateSerializer, ChangePasswordSerializer,
+    ShoppingCartSerializer, UserSerializer, SubscriptionCreateSerializer,
+    ChangePasswordSerializer,
 )
 from .pagination import CustomPagination
 from .filters import IngredientFilter, RecipeFilter
@@ -183,13 +183,13 @@ class UserDetailView(RetrieveAPIView):
 
     permission_classes = [AllowAny]
     queryset = CustomUser.objects.all()
-    serializer_class = UserDetailSerializer
+    serializer_class = UserSerializer
     lookup_field = 'id'
 
 
 class CurrentUserViewSet(RetrieveAPIView):
     '''API view для получения данных текущего пользователя.'''
-    serializer_class = UserDetailSerializer
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
