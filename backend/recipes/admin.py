@@ -143,9 +143,10 @@ class ShoppingCartAdmin(admin.ModelAdmin):
 
 
 class RecipeIngredientAdminForm(forms.ModelForm):
+    '''Форма валидации модели RecipeIngredient.'''
     class Meta:
         model = RecipeIngredient
-        fields = '__all__'
+        fields = ['recipe', 'ingredient', 'amount', ]
 
     def clean(self):
         cleaned_data = super().clean()
