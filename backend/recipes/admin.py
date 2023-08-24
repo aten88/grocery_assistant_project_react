@@ -11,20 +11,24 @@ class TagAdminForm(forms.ModelForm):
     '''Форма валидации модели Tag.'''
     class Meta:
         model = Tag
-        fields = ['name', 'color', ]
+        fields = ['name', 'color', 'slug']
 
     def clean(self):
         cleaned_data = super().clean()
         name = cleaned_data.get('name')
         color = cleaned_data.get('color')
+        slug = cleaned_data.get('slug')
 
         if Tag.objects.filter(name=name).exclude(id=self.instance.id).exists():
-            raise forms.ValidationError('Тег с таким именем уже существует.')
+            raise forms.ValidationError('Ошибка валидации.')
 
         if Tag.objects.filter(color=color).exclude(
             id=self.instance.id
         ).exists():
-            raise forms.ValidationError('Тег с таким цветом уже существует.')
+            raise forms.ValidationError('Ошибка валидации.')
+
+        if Tag.objects.filter(slug=slug).exclude(id=self.instance.id).exists():
+            raise forms.ValidationError('Ошибка валидации.')
 
         return cleaned_data
 
