@@ -12,6 +12,9 @@ from recipes.models import (
 )
 from recipes.constants import LIMIT_DIGIT_VI
 from users.models import CustomUser
+from .validators import (
+    validate_unique_ingredients, validate_tags, validate_unique_tags
+)
 
 
 class Base64ImageField(serializers.ImageField):
@@ -116,6 +119,28 @@ class RecipeSerializer(serializers.ModelSerializer):
             'name', 'image', 'text', 'cooking_time',
         ]
 
+    def validate(self, data):
+        ingredients_data = data.get('recipe_ingredients_set')
+        if not ingredients_data:
+            raise serializers.ValidationError(
+                'Рецепт не может быть создан без ингредиентов.'
+            )
+
+        for ingredient_data in ingredients_data:
+            amount = ingredient_data.get('amount')
+            if amount is not None and amount <= 0:
+                raise serializers.ValidationError(
+                    'Количество ингредиента должно быть больше 0.'
+                    )
+
+        cooking_time = data.get('cooking_time')
+        if cooking_time is not None and cooking_time <= 0:
+            raise serializers.ValidationError(
+                'Время приготовления должно быть больше 0.'
+            )
+
+        return data
+
     def to_representation(self, instance):
         '''Метод переопределения данных.'''
         representation = super().to_representation(instance)
@@ -139,7 +164,10 @@ class RecipeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         '''Метод создания рецепта.'''
         ingredients_data = validated_data.pop('recipe_ingredients_set')
+        validate_unique_ingredients(ingredients_data)
         tags = validated_data.pop('tags')
+        validate_tags(tags),
+        validate_unique_tags(tags)
 
         with transaction.atomic():
             recipe = Recipe.objects.create(**validated_data)
