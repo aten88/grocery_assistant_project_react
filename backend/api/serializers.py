@@ -131,7 +131,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             if amount is not None and amount <= 0:
                 raise serializers.ValidationError(
                     'Количество ингредиента должно быть больше 0.'
-                    )
+                )
 
         cooking_time = data.get('cooking_time')
         if cooking_time is not None and cooking_time <= 0:

@@ -205,7 +205,7 @@ class ChangePasswordViewSet(viewsets.ViewSet):
     def set_password(self, request):
         '''Метод проверки и смены пароля.'''
         serializer = ChangePasswordSerializer(
-            data=request.data,  context={'request': request}
+            data=request.data, context={'request': request}
         )
 
         if serializer.is_valid():
