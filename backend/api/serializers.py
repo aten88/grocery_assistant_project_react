@@ -5,16 +5,17 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
+from rest_framework.validators import UniqueTogetherValidator
 
 from recipes.models import (
     Tag, Ingredient, RecipeIngredient,
     Recipe, Subscription, ShoppingCart, Favorite
 )
-from recipes.constants import LIMIT_DIGIT_3
 from users.models import CustomUser
 from .validators import (
     validate_unique_ingredients, validate_tags, validate_unique_tags
 )
+from recipes.constants import LIMIT_DIGIT_3
 
 
 class Base64ImageField(serializers.ImageField):
@@ -271,7 +272,12 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
 
     def get_recipes(self, obj):
         '''Метод получения рецептов автора по подписке.'''
-        recipes = obj.author.author_recipes.all()[:LIMIT_DIGIT_3]
+        limit = self.context['request'].query_params.get('limit')
+        if limit.isdigit():
+            limit = int(limit)
+        else:
+            limit = int(LIMIT_DIGIT_3)
+        recipes = obj.author.author_recipes.all()[:limit]
         return ShortListRecipeSerializer(recipes, many=True).data
 
     def get_recipes_count(self, obj):
@@ -285,17 +291,13 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = ['user', 'recipe']
-
-    def validate(self, data):
-        '''Метод обновления списка покупок.'''
-        user = self.context['request'].user
-        recipe = data['recipe']
-
-        if user.shopping_user.filter(recipe=recipe).exists():
-            raise serializers.ValidationError(
-                'Рецепт уже добавлен в список покупок.'
+        validators = [
+            UniqueTogetherValidator(
+                queryset=ShoppingCart.objects.all(),
+                fields=['user', 'recipe'],
+                message='Рецепт уже добавлен в список покупок.'
             )
-        return data
+        ]
 
 
 class SubscriptionCreateSerializer(serializers.Serializer):
