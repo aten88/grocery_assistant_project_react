@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-from recipes.constants import LIMIT_DIGIT_IV
+from recipes.constants import LIMIT_DIGIT_50
 
 
 class CustomUser(AbstractUser):
@@ -13,17 +13,17 @@ class CustomUser(AbstractUser):
         unique=True
     )
     username = models.CharField(
-        max_length=LIMIT_DIGIT_IV,
+        max_length=LIMIT_DIGIT_50,
         verbose_name='Имя пользователя',
         unique=True,
         db_index=True
     )
     first_name = models.CharField(
-        max_length=LIMIT_DIGIT_IV,
+        max_length=LIMIT_DIGIT_50,
         verbose_name='Имя'
     )
     last_name = models.CharField(
-        max_length=LIMIT_DIGIT_IV,
+        max_length=LIMIT_DIGIT_50,
         verbose_name='Фамилия'
     )
 

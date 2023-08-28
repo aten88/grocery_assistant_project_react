@@ -215,10 +215,6 @@ class ChangePasswordViewSet(viewsets.ViewSet):
                 {'detail': 'Пароль успешно изменен'},
                 status=status.HTTP_204_NO_CONTENT
             )
-        else:
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
 
 
 class UserSubscriptionListAPIView(ListAPIView):

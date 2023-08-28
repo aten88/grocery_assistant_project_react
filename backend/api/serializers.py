@@ -10,7 +10,7 @@ from recipes.models import (
     Tag, Ingredient, RecipeIngredient,
     Recipe, Subscription, ShoppingCart, Favorite
 )
-from recipes.constants import LIMIT_DIGIT_VI
+from recipes.constants import LIMIT_DIGIT_3
 from users.models import CustomUser
 from .validators import (
     validate_unique_ingredients, validate_tags, validate_unique_tags
@@ -264,15 +264,15 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
         '''Метод проверки подписки юзера.'''
 
         request_user = self.context.get('request').user
-        if request_user.is_authenticated:
-            return obj.author.follow.filter(user=request_user).exists()
-        return False
+        return (
+            obj.author.follow.filter(user=request_user).exists()
+            if request_user.is_authenticated else False
+        )
 
     def get_recipes(self, obj):
         '''Метод получения рецептов автора по подписке.'''
-        recipes = obj.author.author_recipes.all()[:LIMIT_DIGIT_VI]
-        serializer = ShortListRecipeSerializer(recipes, many=True)
-        return serializer.data
+        recipes = obj.author.author_recipes.all()[:LIMIT_DIGIT_3]
+        return ShortListRecipeSerializer(recipes, many=True).data
 
     def get_recipes_count(self, obj):
         '''Метод получения количества рецептов автора.'''
@@ -293,7 +293,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
         if user.shopping_user.filter(recipe=recipe).exists():
             raise serializers.ValidationError(
-                "Рецепт уже добавлен в список покупок."
+                'Рецепт уже добавлен в список покупок.'
             )
         return data
 
@@ -310,11 +310,11 @@ class SubscriptionCreateSerializer(serializers.Serializer):
 
         if user_to_subscribe == request_user:
             raise serializers.ValidationError(
-                "Вы не можете подписаться на себя."
+                'Вы не можете подписаться на себя.'
             )
 
         if request_user.follow.filter(author=user_to_subscribe).exists():
-            raise serializers.ValidationError("Вы уже подписаны на автора.")
+            raise serializers.ValidationError('Вы уже подписаны на автора.')
 
         Subscription.objects.create(
             user=request_user,
