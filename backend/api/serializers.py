@@ -288,7 +288,7 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
     def get_recipes(self, obj):
         '''Метод получения рецептов автора по подписке.'''
         limit = self.context['request'].query_params.get('limit')
-        if limit.isdigit():
+        if limit is not None and limit.isdigit():
             limit = int(limit)
         else:
             limit = int(LIMIT_DIGIT_3)
@@ -298,6 +298,61 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
     def get_recipes_count(self, obj):
         '''Метод получения количества рецептов автора.'''
         return obj.author.author_recipes.count()
+
+
+class SubscriptionCreateSerializer(serializers.ModelSerializer):
+    '''Сериализатор создания подписок.'''
+
+    class Meta:
+        model = Subscription
+        fields = []
+
+    def create(self, validated_data):
+        '''Метод создания подписки.'''
+        request_user = self.context['request'].user
+        user_id = self.context['request'].parser_context['kwargs']['id']
+        user_to_subscribe = get_object_or_404(
+            CustomUser, id=user_id
+        )
+
+        if user_to_subscribe == request_user:
+            raise serializers.ValidationError(
+                'Вы не можете подписаться на себя.'
+            )
+
+        if Subscription.objects.filter(
+            user=request_user, author=user_to_subscribe
+        ).exists():
+            raise serializers.ValidationError('Вы уже подписаны на автора.')
+
+        Subscription.objects.create(
+            user=request_user,
+            author=user_to_subscribe
+        )
+
+        recipes = Recipe.objects.filter(author=user_to_subscribe)
+        recipes_data = []
+        for recipe in recipes:
+            recipe_data = {
+                'id': recipe.id,
+                'name': recipe.name,
+                'image': recipe.image.url if recipe.image else '',
+                'cooking_time': recipe.cooking_time
+            }
+            recipes_data.append(recipe_data)
+
+        author_data = {
+            'email': user_to_subscribe.email,
+            'id': user_to_subscribe.id,
+            'username': user_to_subscribe.username,
+            'first_name': user_to_subscribe.first_name,
+            'last_name': user_to_subscribe.last_name,
+            'is_subscribed': True,
+            'recipes': recipes_data,
+            'recipes_count': len(recipes)
+        }
+
+        return author_data
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
@@ -313,42 +368,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
                 message='Рецепт уже добавлен в список покупок.'
             )
         ]
-
-
-class SubscriptionCreateSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-
-    def create(self, validated_data):
-        '''Метод создания подписки.'''
-        request_user = self.context['request'].user
-        user_to_subscribe = get_object_or_404(
-            CustomUser, id=validated_data['id']
-        )
-
-        if user_to_subscribe == request_user:
-            raise serializers.ValidationError(
-                'Вы не можете подписаться на себя.'
-            )
-
-        if request_user.follow.filter(author=user_to_subscribe).exists():
-            raise serializers.ValidationError('Вы уже подписаны на автора.')
-
-        Subscription.objects.create(
-            user=request_user,
-            author=user_to_subscribe
-        )
-
-        author_data = {
-            'email': user_to_subscribe.email,
-            'username': user_to_subscribe.username,
-            'first_name': user_to_subscribe.first_name,
-            'last_name': user_to_subscribe.last_name,
-            'is_subscribed': True,
-            'recipes': [],
-            'recipes_count': 0
-        }
-
-        return author_data
 
 
 class ChangePasswordSerializer(serializers.Serializer):
