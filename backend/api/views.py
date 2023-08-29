@@ -17,10 +17,10 @@ from recipes.models import (
     Subscription, ShoppingCart
 )
 from .serializers import (
-    TagSerializer, IngredientSerializer, RecipeSerializer,
+    TagSerializer, IngredientSerializer, RecipeWriteSerializer,
     SubscriptionSerialiazer, FavoriteSerializer,
     ShoppingCartSerializer, UserSerializer, SubscriptionCreateSerializer,
-    ChangePasswordSerializer,
+    ChangePasswordSerializer, RecipeReadSerializer
 )
 from .pagination import CustomPagination
 from .filters import IngredientFilter, RecipeFilter
@@ -53,7 +53,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     '''Вьюсет списка модели Recipe.'''
 
     queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
+    serializer_class = RecipeReadSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend,)
@@ -61,7 +61,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         '''Метод создания нового рецепта.'''
-        serializer = RecipeSerializer(
+        serializer = RecipeWriteSerializer(
             data=request.data, context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
@@ -71,7 +71,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
         '''Метод обновления данных в рецептe по id.'''
         instance = self.get_object()
-        serializer = RecipeSerializer(
+        serializer = RecipeWriteSerializer(
             instance, data=request.data, context={'request': request},
             partial=True
         )

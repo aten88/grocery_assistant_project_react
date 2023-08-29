@@ -97,8 +97,44 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
         return None
 
 
-class RecipeSerializer(serializers.ModelSerializer):
-    '''Сериализатор модели Recipe.'''
+class RecipeReadSerializer(serializers.ModelSerializer):
+    '''Сериализатор для представления модели Recipe.'''
+
+    tags = TagSerializer(many=True)
+    author = UserSerializer(default=CurrentUserDefault())
+    ingredients = RecipeIngredientSerializer(
+        many=True, source='recipe_ingredients_set'
+    )
+    is_in_shopping_cart = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Recipe
+        fields = [
+            'id', 'tags', 'author', 'ingredients',
+            'is_favorited', 'is_in_shopping_cart',
+            'name', 'image', 'text', 'cooking_time',
+        ]
+
+    def get_is_favorited(self, recipe):
+        '''Метод проверки избранного.'''
+        user = self.context.get('request').user
+        return (
+            user.favorites.filter(recipe=recipe).exists() if
+            user.is_authenticated else False
+        )
+
+    def get_is_in_shopping_cart(self, recipe):
+        '''Метод проверки списка покупок.'''
+        user = self.context.get('request').user
+        return (
+            user.shopping_user.filter(recipe=recipe).exists() if
+            user.is_authenticated else False
+        )
+
+
+class RecipeWriteSerializer(serializers.ModelSerializer):
+    '''Сериализатор для записи модели Recipe.'''
 
     ingredients = RecipeIngredientSerializer(
         many=True, source='recipe_ingredients_set'
@@ -109,15 +145,12 @@ class RecipeSerializer(serializers.ModelSerializer):
     )
     image = Base64ImageField(required=False, allow_null=True)
     author = UserSerializer(default=CurrentUserDefault())
-    is_in_shopping_cart = serializers.SerializerMethodField()
-    is_favorited = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
         fields = [
-            'id', 'tags', 'author', 'ingredients',
-            'is_favorited', 'is_in_shopping_cart',
-            'name', 'image', 'text', 'cooking_time',
+            'ingredients', 'tags', 'author',
+            'image', 'name', 'text', 'cooking_time',
         ]
 
     def validate(self, data):
@@ -145,9 +178,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         '''Метод переопределения данных.'''
         representation = super().to_representation(instance)
-        representation['tags'] = TagSerializer(
-            instance.tags.all(), many=True
-        ).data
+        representation['tags'] = instance.tags.values_list('id', flat=True)
         return representation
 
     def create_recipe_ingredients(self, recipe, ingredients_data):
@@ -197,22 +228,6 @@ class RecipeSerializer(serializers.ModelSerializer):
             recipe.save()
 
         return recipe
-
-    def get_is_in_shopping_cart(self, recipe):
-        '''Метод проверки списка покупок.'''
-        user = self.context.get('request').user
-        return (
-            user.shopping_user.filter(recipe=recipe).exists() if
-            user.is_authenticated else False
-        )
-
-    def get_is_favorited(self, recipe):
-        '''Метод проверки избранного.'''
-        user = self.context.get('request').user
-        return (
-            user.favorites.filter(recipe=recipe).exists() if
-            user.is_authenticated else False
-        )
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
