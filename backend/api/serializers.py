@@ -15,7 +15,7 @@ from users.models import CustomUser
 from .validators import (
     validate_unique_ingredients, validate_tags, validate_unique_tags
 )
-from recipes.constants import LIMIT_DIGIT_3
+from recipes.constants import LIMIT_RECIPES
 
 
 class Base64ImageField(serializers.ImageField):
@@ -234,6 +234,13 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ['user', 'recipe']
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=Favorite.objects.all(),
+                fields=['user', 'recipe'],
+                message='Данный рецепт уже добавлен в избранное.'
+            )
+        ]
 
     def validate(self, data):
         user = self.context['request'].user
@@ -242,11 +249,6 @@ class FavoriteSerializer(serializers.ModelSerializer):
         if user == recipe.author:
             raise serializers.ValidationError(
                 'Вы не можете добавить свой рецепт в избранное.'
-            )
-
-        if recipe.favorites.filter(user=user).exists():
-            raise serializers.ValidationError(
-                'Данный рецепт уже добавлен в избранное.'
             )
 
         return data
@@ -288,10 +290,7 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
     def get_recipes(self, obj):
         '''Метод получения рецептов автора по подписке.'''
         limit = self.context['request'].query_params.get('limit')
-        if limit is not None and limit.isdigit():
-            limit = int(limit)
-        else:
-            limit = int(LIMIT_DIGIT_3)
+        limit = int(limit) if limit and limit.isdigit() else LIMIT_RECIPES
         recipes = obj.author.author_recipes.all()[:limit]
         return ShortListRecipeSerializer(recipes, many=True).data
 

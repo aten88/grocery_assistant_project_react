@@ -6,8 +6,9 @@ from django.core.validators import (
 from django.core.exceptions import ValidationError
 
 from .constants import (
-    MIN_COOKING_TIME, MAX_COOKING_TIME, MAX_LENGTH, MAX_LENGTH_200,
-    LIMIT_DIGIT_10, LIMIT_DIGIT_2, LIMIT_DIGIT_7, LIMIT_DIGIT_50
+    MIN_COOKING_TIME, MAX_COOKING_TIME, MAX_LENGTH, MAX_LENGTH_NAME_FIELD,
+    LIMIT_DIGITS_AMOUNT_FIELD, LIMIT_NUMBER_WIDTH, LIMIT_COLOR_FIELD,
+    LIMIT_MODEL_FIELD
 )
 from .validators import unique_color_validator
 from users.models import CustomUser
@@ -17,12 +18,12 @@ class Tag(models.Model):
     '''Модель тега.'''
 
     name = models.CharField(
-        max_length=MAX_LENGTH_200,
+        max_length=MAX_LENGTH_NAME_FIELD,
         verbose_name='Название Тега.',
         unique=True
     )
     color = models.CharField(
-        max_length=LIMIT_DIGIT_7,
+        max_length=LIMIT_COLOR_FIELD,
         verbose_name='HEX-код цвета.',
         unique=True,
         validators=[
@@ -53,11 +54,11 @@ class Ingredient(models.Model):
     '''Модель ингредиента.'''
 
     name = models.CharField(
-        max_length=MAX_LENGTH_200,
+        max_length=MAX_LENGTH_NAME_FIELD,
         verbose_name='Название ингредиента'
     )
     measurement_unit = models.CharField(
-        max_length=LIMIT_DIGIT_50,
+        max_length=LIMIT_MODEL_FIELD,
         verbose_name='Единица измерения'
     )
 
@@ -85,7 +86,7 @@ class Recipe(models.Model):
         related_name='author_recipes'
     )
     name = models.CharField(
-        max_length=MAX_LENGTH_200,
+        max_length=MAX_LENGTH_NAME_FIELD,
         verbose_name='Название рецепта.',
         unique=True
     )
@@ -150,8 +151,8 @@ class RecipeIngredient(models.Model):
         verbose_name='Ингредиент'
     )
     amount = models.DecimalField(
-        max_digits=LIMIT_DIGIT_10,
-        decimal_places=LIMIT_DIGIT_2,
+        max_digits=LIMIT_DIGITS_AMOUNT_FIELD,
+        decimal_places=LIMIT_NUMBER_WIDTH,
         verbose_name='Количество ингредиента'
     )
 
