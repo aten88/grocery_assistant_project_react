@@ -107,7 +107,9 @@ class SubscriptionAdminForm(forms.ModelForm):
         user = cleaned_data.get('user')
 
         if author == user:
-            raise forms.ValidationError('Ошибка валидации.')
+            raise forms.ValidationError(
+                'Ошибка валидации. Вы не можете подписаться на себя.'
+            )
 
         if author.follow.filter(user=user).exclude(
             id=self.instance.id

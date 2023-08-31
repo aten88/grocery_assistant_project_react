@@ -239,11 +239,6 @@ class Subscription(models.Model):
             f'Пользователь {self.user} подписан на {self.author}'
         )
 
-    def clean(self):
-        '''Метод валидации данных перед сохранением.'''
-        if self.user == self.author:
-            raise ValidationError('Вы не можете подписаться на самого себя.')
-
 
 class ShoppingCart(models.Model):
     '''Модель списка покупок.'''
