@@ -1,0 +1,6 @@
+venv
+.git
+db.sqlite3
+static/
+media/
+../foodgram-project-react/.env
