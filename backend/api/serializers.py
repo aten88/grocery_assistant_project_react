@@ -2,7 +2,6 @@ import base64
 
 from django.core.files.base import ContentFile
 from django.db import transaction
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 from rest_framework.validators import UniqueTogetherValidator
@@ -300,58 +299,26 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
 
 
 class SubscriptionCreateSerializer(serializers.ModelSerializer):
-    '''Сериализатор создания подписок.'''
-
+    '''Сериализатор создания подписки.'''
     class Meta:
         model = Subscription
-        fields = []
+        fields = ['user', 'author']
 
-    def create(self, validated_data):
-        '''Метод создания подписки.'''
-        request_user = self.context['request'].user
-        user_id = self.context['request'].parser_context['kwargs']['id']
-        user_to_subscribe = get_object_or_404(
-            CustomUser, id=user_id
-        )
+    def validate(self, data):
+        user = self.context['request'].user
+        author = data.get('author')
 
-        if user_to_subscribe == request_user:
+        if user == author:
             raise serializers.ValidationError(
                 'Вы не можете подписаться на себя.'
             )
 
-        if Subscription.objects.filter(
-            user=request_user, author=user_to_subscribe
-        ).exists():
-            raise serializers.ValidationError('Вы уже подписаны на автора.')
+        if user.follower.filter(author=author).exists():
+            raise serializers.ValidationError(
+                'Вы уже подписаны на этого автора.'
+            )
 
-        Subscription.objects.create(
-            user=request_user,
-            author=user_to_subscribe
-        )
-
-        recipes = Recipe.objects.filter(author=user_to_subscribe)
-        recipes_data = []
-        for recipe in recipes:
-            recipe_data = {
-                'id': recipe.id,
-                'name': recipe.name,
-                'image': recipe.image.url if recipe.image else '',
-                'cooking_time': recipe.cooking_time
-            }
-            recipes_data.append(recipe_data)
-
-        author_data = {
-            'email': user_to_subscribe.email,
-            'id': user_to_subscribe.id,
-            'username': user_to_subscribe.username,
-            'first_name': user_to_subscribe.first_name,
-            'last_name': user_to_subscribe.last_name,
-            'is_subscribed': True,
-            'recipes': recipes_data,
-            'recipes_count': len(recipes)
-        }
-
-        return author_data
+        return data
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
