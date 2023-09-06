@@ -1,4 +1,4 @@
-                                                                    Как работать с проектом:
+Как работать с проектом:
 
 Склонировать репозиторий:
   -git clone git@github.com:aten88/foodgram-project-react.git
