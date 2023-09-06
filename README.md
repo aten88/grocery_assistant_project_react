@@ -1,30 +1,19 @@
 Как работать с проектом:
 
 Склонировать репозиторий:
+  -git clone git@github.com:aten88/foodgram-project-react.git
 
-git clone git@github.com:aten88/foodgram-project-react.git
+  Заполнить файл .env:
+    В переменные необходимо передать значения для создания пользователя и БД
+    Описание всех переменных есть в файле env.example
 
-Установить venv:
-py -3.9 -m venv venv
+  Собрать статику:
+  ???
+  ???
 
-Активировать виртуальное окружение:
-source venv/Scripts/activate
-
-Обновить пакетный менеджер pip:
-python.exe -m pip install --upgrade pip
-
-Установить зависимости:
-pip install -r requirements.txt
-
-Создать и применить миграции:
-python manage.py makemigrations
-python manage.py migrate
-
-Добавить суперюзера:
-python manage.py createsuperuser
-
-Загрузить ингредиенты в БД
-python manage.py load_ingredients
+  Загрузить теги и ингредиенты в БД:
+    При запущенном контейнере backend в новом терминале последовательно выполнить команды:
+      -docker compose exec backend python manage.py load_tags
+      -docker compose exec backend python manage.py load_ingredients
 
 Запустить проект:
-python manage.py runserver

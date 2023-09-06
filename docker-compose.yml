@@ -1,0 +1,35 @@
+version: '3'
+
+volumes:
+  foodgram_pg_data:
+  static:
+
+services:
+
+  foodgram_db:
+    image: postgres:13.10
+    env_file: .env
+    volumes:
+      - foodgram_pg_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend/
+    env_file: .env
+    volumes:
+      - static:/backend_static
+    depends_on:
+      - foodgram_db
+  
+  frontend:
+    env_file: .env
+    build: ./frontend/
+    command: cp -r /app/build/. /frontend_static/
+    volumes:
+      - static:/frontend_static
+
+  gateway:
+    build: ./gateway/
+    volumes:
+      - static:/staticfiles/
+    ports:
+      - 8000:80
