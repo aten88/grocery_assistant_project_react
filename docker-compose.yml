@@ -3,6 +3,7 @@ version: '3'
 volumes:
   foodgram_pg_data:
   static:
+  media:
 
 services:
 
@@ -17,6 +18,7 @@ services:
     env_file: .env
     volumes:
       - static:/backend_static
+      - media:/app/media
     depends_on:
       - foodgram_db
   
@@ -31,5 +33,6 @@ services:
     build: ./gateway/
     volumes:
       - static:/staticfiles/
+      - media:/media
     ports:
       - 8000:80
