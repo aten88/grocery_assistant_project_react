@@ -139,6 +139,7 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
+    '''Модель ингредиета в рецепте.'''
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
