@@ -303,6 +303,13 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = ['user', 'author']
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Subscription.objects.all(),
+                fields=['user', 'author'],
+                message='Вы уже подписаны на этого автора.'
+            )
+        ]
 
     def validate(self, data):
         user = self.context['request'].user
@@ -311,11 +318,6 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
         if user == author:
             raise serializers.ValidationError(
                 'Вы не можете подписаться на себя.'
-            )
-
-        if user.follower.filter(author=author).exists():
-            raise serializers.ValidationError(
-                'Вы уже подписаны на этого автора.'
             )
 
         return data
