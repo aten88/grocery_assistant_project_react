@@ -230,10 +230,9 @@ class UserSubscriptionListAPIView(ListAPIView):
 
     def post(self, request, id):
         '''Метод создания подписки по id.'''
-        get_object_or_404(CustomUser, id=id)
         serializer = SubscriptionCreateSerializer(
             data={'user': request.user.id, 'author': id},
-            context={'request': request, 'view': self}
+            context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -241,9 +240,8 @@ class UserSubscriptionListAPIView(ListAPIView):
 
     def delete(self, request, id):
         '''Метод удаления подписки по id.'''
-        user_to_unsubscribe = get_object_or_404(CustomUser, id=id)
         subscription = get_object_or_404(
-            Subscription, user=request.user, author=user_to_unsubscribe
+            Subscription, user=request.user, author_id=id
         )
         subscription.delete()
         return Response(
