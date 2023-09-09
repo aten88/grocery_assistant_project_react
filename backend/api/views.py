@@ -245,11 +245,7 @@ class UserSubscriptionListAPIView(ListAPIView):
         subscription = get_object_or_404(
             Subscription, user=request.user, author=user_to_unsubscribe
         )
-        if subscription:
-            subscription.delete()
-            return Response(
-                'Вы отписались от автора.', status=status.HTTP_204_NO_CONTENT
-            )
+        subscription.delete()
         return Response(
             'Подписки не существует', status=status.HTTP_204_NO_CONTENT
         )
