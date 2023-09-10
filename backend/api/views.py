@@ -92,9 +92,9 @@ class AddFavoriteView(APIView):
     def post(self, request, id):
         '''Метод добавления рецепта в избранное.'''
         recipe = get_object_or_404(Recipe, id=id)
-        favorite_data = {'user': request.user.id, 'recipe': recipe.id}
         serializer = FavoriteSerializer(
-            data=favorite_data, context={'request': request}
+            data={'user': request.user.id, 'recipe': recipe.id},
+            context={'request': request}
         )
         if serializer.is_valid():
             serializer.save()
@@ -116,9 +116,9 @@ class AddToShoppingCart(APIView):
     def post(self, request, id):
         '''Метод для добавления рецепта в список покупок.'''
         recipe = get_object_or_404(Recipe, id=id)
-        cart_data = {'user': request.user.id, 'recipe': recipe.id}
         serializer = ShoppingCartSerializer(
-            data=cart_data, context={'request': request}
+            data={'user': request.user.id, 'recipe': recipe.id},
+            context={'request': request}
         )
         if serializer.is_valid():
             serializer.save()
