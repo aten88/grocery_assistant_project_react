@@ -41,6 +41,8 @@ jobs:
       - name: Check out the repo
         # Получение исходного кода из репозитория
         uses: actions/checkout@v3
+      - name: Extract .env from secret
+        run: echo "${{ secrets.ENV_SECRET }}" > .env
       - name: Set up Docker Buildx
         # Установка сборщика контейнеров Docker
         uses: docker/setup-buildx-action@v2
