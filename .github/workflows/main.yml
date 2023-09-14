@@ -55,8 +55,9 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           # Хорошо ли держать логин и пароль прямо в коде workflow?
           # Нет, это нехорошо
-      - name: Extract .env from secret
-        run: echo "${{ secrets.ENV_SECRET }}" > .env
+      - name: Create .env file from secret
+        run: |
+          echo "${{ secrets.ENV_SECRET }}" > ./backend/.env
       - name: Build Docker image
         run: docker build -t alexeyten/foodgram_backend:latest ./backend/
       - name: Push Docker image
