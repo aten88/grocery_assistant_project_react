@@ -55,18 +55,9 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           # Хорошо ли держать логин и пароль прямо в коде workflow?
           # Нет, это нехорошо
-      - name: Push to DockerHub
-        # Одновременный билд и пуш образа в Docker Hub
-        uses: docker/build-push-action@v4
-        with:
-          # Параметр context: ./backend/ указывает, что нужный Dockerfile 
-          # находится в ./backend/
-          context: ./backend/
-          # Параметр push: true указывает, что образ нужно не только собрать,
-          # но и отправить на Docker Hub
-          push: true
-          # В параметре tags задаётся название и тег для образа.
-          # Для каждого пересобранного образа 
-          # устанавливаем тег latest, чтобы потом
-          # на сервере и в docker-compose.yml не указывать версию
-          tags: alexeyten/foodgram_backend:latest
+      - name: Extract .env from secret
+        run: echo "${{ secrets.ENV_SECRET }}" > .env
+      - name: Build Docker image
+        run: docker build -t alexeyten/foodgram_backend:latest ./backend/
+      - name: Push Docker image
+        run: docker push alexeyten/foodgram_backend:latest
