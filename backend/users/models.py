@@ -1,7 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
-
 from recipes.constants import LIMIT_MODEL_FIELD
 
 

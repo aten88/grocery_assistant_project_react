@@ -1,10 +1,8 @@
-from django.contrib import admin
 from django import forms
+from django.contrib import admin
 
-from .models import (
-    Tag, Ingredient, Recipe, Favorite,
-    Subscription, ShoppingCart, RecipeIngredient
-)
+from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                     ShoppingCart, Subscription, Tag)
 
 
 class TagAdminForm(forms.ModelForm):

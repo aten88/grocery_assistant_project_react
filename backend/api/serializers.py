@@ -2,19 +2,16 @@ import base64
 
 from django.core.files.base import ContentFile
 from django.db import transaction
+from recipes.constants import LIMIT_RECIPES
+from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                            ShoppingCart, Subscription, Tag)
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 from rest_framework.validators import UniqueTogetherValidator
-
-from recipes.models import (
-    Tag, Ingredient, RecipeIngredient,
-    Recipe, Subscription, ShoppingCart, Favorite
-)
 from users.models import CustomUser
-from .validators import (
-    validate_unique_ingredients, validate_tags, validate_unique_tags
-)
-from recipes.constants import LIMIT_RECIPES
+
+from .validators import (validate_tags, validate_unique_ingredients,
+                         validate_unique_tags)
 
 
 class Base64ImageField(serializers.ImageField):

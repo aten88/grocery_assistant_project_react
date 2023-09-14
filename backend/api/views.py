@@ -1,31 +1,27 @@
-from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
+from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status
-from rest_framework.views import APIView
-from rest_framework.permissions import (
-    AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
-)
-from rest_framework.response import Response
-from rest_framework.generics import (
-    RetrieveAPIView, ListAPIView, get_object_or_404
-)
+from recipes.models import (Favorite, Ingredient, Recipe, ShoppingCart,
+                            Subscription, Tag)
+from rest_framework import status, viewsets
+from rest_framework.generics import (ListAPIView, RetrieveAPIView,
+                                     get_object_or_404)
 from rest_framework.pagination import PageNumberPagination
-
-from recipes.models import (
-    Tag, Ingredient, Recipe, Favorite,
-    Subscription, ShoppingCart
-)
-from .serializers import (
-    TagSerializer, IngredientSerializer, RecipeWriteSerializer,
-    SubscriptionSerialiazer, FavoriteSerializer,
-    ShoppingCartSerializer, UserSerializer, SubscriptionCreateSerializer,
-    ChangePasswordSerializer, RecipeReadSerializer
-)
-from .pagination import CustomPagination
-from .filters import IngredientFilter, RecipeFilter
-from .utils import gen_shopping_list
+from rest_framework.permissions import (AllowAny, IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from users.models import CustomUser
+
+from .filters import IngredientFilter, RecipeFilter
+from .pagination import CustomPagination
+from .serializers import (ChangePasswordSerializer, FavoriteSerializer,
+                          IngredientSerializer, RecipeReadSerializer,
+                          RecipeWriteSerializer, ShoppingCartSerializer,
+                          SubscriptionCreateSerializer,
+                          SubscriptionSerialiazer, TagSerializer,
+                          UserSerializer)
+from .utils import gen_shopping_list
 
 
 class TagViewSet(viewsets.ModelViewSet):
