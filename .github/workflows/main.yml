@@ -63,4 +63,4 @@ jobs:
               with:
                 context: ./frontend/
                 push: true
-                tags:  ${{ secrets.LOGIN_DOCHUB }}/kittygram_frontend:latest
+                tags:  ${{ secrets.LOGIN_DOCHUB }}/foodgram_frontend:latest
