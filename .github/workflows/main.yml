@@ -43,7 +43,7 @@
 #       - name: Build Docker image
 #         run: docker build -t alexeyten/foodgram_backend:latest ./backend/
 #       - name: Push Docker image
-#         run: docker push ${{ secrets.LOGIN_DOCHUB }}/foodgram_backend:latest
+#         run: docker push ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
       
 #   build_frontend_and_push_to_docker_hub:
 #       name: Push frontend Docker image to DockerHub
@@ -63,7 +63,7 @@
 #           with:
 #             context: ./frontend/
 #             push: true
-#             tags:  ${{ secrets.LOGIN_DOCHUB }}/foodgram_frontend:latest
+#             tags:  ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
 
 #   build_gateway_and_push_to_docker_hub:
 #       name: Push gateway Docker image to DockerHub
@@ -83,7 +83,7 @@
 #           with:
 #             context: ./gateway/
 #             push: true
-#             tags: ${{ secrets.LOGIN_DOCHUB }}/foodgram_gateway:latest
+#             tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_gateway:latest
 
 #   deploy:
 #     runs-on: ubuntu-latest
