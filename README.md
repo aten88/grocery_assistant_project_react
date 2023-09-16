@@ -1,4 +1,5 @@
-<!-- [![Main Kittygram workflow](https://github.com/aten88/kittygram_final/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/aten88/kittygram_final/actions/workflows/main.yml) -->
+[![Foodgram Project React workflow](https://github.com/aten88/foodgram-project-react/actions/workflows/main.yml/badge.svg)](https://github.com/aten88/foodgram-project-react/actions/workflows/main.yml)
+
 
 Описание проекта:
 Продуктовый помощник Foodgram который позволяет:
