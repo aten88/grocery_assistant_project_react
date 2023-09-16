@@ -80,6 +80,11 @@ Github Actions
     - Зарегистрировать нового пользователя
     - Войти с учетными данными
     - Создать рецепт
+
+    Остановка контейнеров:
+      В терминале, где был запуск, нажать Ctrl+С или в другом окне терминала:
+      - sudo docker compose -f docker-compose.yml down эта команда остановит и удалит все контейнеры и сети.
+
   
   Для запуска проекта на сервере в контейнерах необходимо:
 
@@ -93,7 +98,7 @@ Github Actions
       в соответствии с примером .env.example::
 
     - Константы Django:
-      ENV_SECRET: - список констант из файла env.example
+      ENV_SECRET: - список констант из файла env.example нужно поместить в secret одним единым списком
 
     - Переменные для доступа к DockerHub:
       DOCKER_USERNAME - логин.
@@ -114,49 +119,6 @@ Github Actions
 
 
     Развернутый проект доступен по адресу: https://aten-foodgram.redirectme.net/
-
-
-
-
-
-
-
-
-
-
-
-
-
-Для того чтобы запустить проект(локально),
-вам необходимо создать и заполнить файл .env в корне проекта в соответствии с примером .env.example:
-
-SECRET_KEY - секретный ключ Django. 
-POSTGRES_DB - название БД. 
-POSTGRES_USER - логин администратора БД. 
-POSTGRES_PASSWORD - пароль администратора БД. 
-DB_NAME - имя созданной в контейнере БД. 
-DB_HOST - хост БД. 
-DB_PORT - номер порта БД.
-
-Выполняем запуск:
- - sudo docker compose -f docker-compose.yml up
-
-После запуска: Выполняем миграции и сбор статистики:
- - sudo docker compose -f [имя-файла-docker-compose.yml] exec backend python manage.py migrate
- - sudo docker compose -f [имя-файла-docker-compose.yml] exec backend python manage.py collectstatic
- - sudo docker compose -f [имя-файла-docker-compose.yml] exec backend cp -r /app/collected_static/. /static/static/
-
-Проект доступен по адресу:
- - http://localhost:9000/
-
-Остановка контейнеров
-В терминале, где был запуск, нажать Ctrl+С или в другом окне терминала:
- - sudo docker compose -f docker-compose.yml down
- эта команда остановит и удалит все контейнеры и сети.
-
-
-Развернутый проект доступен по адресу: https://aten-kittygramm.sytes.net/
-
 
 Автор:
 Алексей Тен
