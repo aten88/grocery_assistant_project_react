@@ -14,8 +14,7 @@ services:
       - foodgram_pg_data:/var/lib/postgresql/data
 
   backend:
-    # build: ./backend/
-    image: alexeyten/foodgram_backend
+    build: ./backend/
     env_file: .env
     volumes:
       - static:/backend_static
@@ -25,15 +24,13 @@ services:
   
   frontend:
     env_file: .env
-    # build: ./frontend/
-    image: alexeyten/foodgram_frontend
+    build: ./frontend/
     command: cp -r /app/build/. /frontend_static/
     volumes:
       - static:/frontend_static
 
   gateway:
-    # build: ./gateway/
-    image: alexeyten/foodgram_gateway
+    build: ./gateway/
     volumes:
       - static:/staticfiles/
       - media:/media
