@@ -9,7 +9,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('DJANGO_KEY')
 
-DEBUG = os.environ.get('DEBUG', False) == 'True'
+# DEBUG = os.environ.get('DEBUG', False) == 'True'
+DEBUG = True
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
@@ -131,4 +132,4 @@ DJOSER = {
     'LOGIN_FIELD': 'email',
     'USER_CREATE_PASSWORD_RETYPE': True,
 }
-CSRF_TRUSTED_ORIGINS = ['https://aten-foodgram.redirectme.net/']
+CSRF_TRUSTED_ORIGINS = ["https://aten-foodgram.redirectme.net/"]
