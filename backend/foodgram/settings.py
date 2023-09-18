@@ -132,4 +132,4 @@ DJOSER = {
     'LOGIN_FIELD': 'email',
     'USER_CREATE_PASSWORD_RETYPE': True,
 }
-CSRF_TRUSTED_ORIGINS = ["https://aten-foodgram.redirectme.net"]
+CSRF_TRUSTED_ORIGINS = ["https://aten-foodgram.redirectme.net", "https://aten-foodgram.redirectme.net/"]
