@@ -41,7 +41,7 @@ jobs:
         run: |
           echo "${{ secrets.ENV_SECRET }}" > ./.env
       - name: Build Docker image
-        run: docker build -t alexeyten/foodgram_backend:latest ./backend/
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest ./backend/
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
       
