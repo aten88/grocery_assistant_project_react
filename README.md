@@ -95,9 +95,6 @@ Github Actions
     Склонировать репозиторий:
       git clone git@github.com:aten88/kittygram_final.git
 
-    Раскомментировать содержимое файла main.yml в директории:
-      foodgram-project-react/.github/workflows/main.yml
-
     В своем аккаунте на GitHub в разделе GitHub Actions Secrets передаем в secrets необходимые значения для запуска:
       ENV_SECRET: DJANGO_KEY = 'django-insecure-yuvxxxxxxxx_xxxxxxx_xxxxxxx'
                   POSTGRES_USER=someuser@somedomain.com
