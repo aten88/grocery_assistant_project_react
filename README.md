@@ -56,7 +56,7 @@ Github Actions
 
   Чтобы запустить проект (локально) в контейнерах:
 
-    Создать и заполнить файл .env в корне проекта и в папке backend:
+    Создать и заполнить файл .env в корне проекта:
       В переменные необходимо передать константы для создания пользователя БД
       Описание всех переменных есть в файле env.example в корне проекта
 
@@ -75,6 +75,9 @@ Github Actions
       При запущенном контейнере backend в новом терминале последовательно выполнить команды:
         - docker compose exec backend python manage.py load_tags
         - docker compose exec backend python manage.py load_ingredients
+
+    Создать суперпользователя:
+    - docker compose exec backend python manage.py createsuperuser
 
     Перейти по адресу:
     - http://localhost:8000/signin

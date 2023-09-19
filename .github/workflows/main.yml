@@ -39,7 +39,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Create .env file from secret
         run: |
-          echo "${{ secrets.ENV_SECRET }}" > ./backend/.env
+          echo "${{ secrets.ENV_SECRET }}" > ./.env
       - name: Build Docker image
         run: docker build -t alexeyten/foodgram_backend:latest ./backend/
       - name: Push Docker image
