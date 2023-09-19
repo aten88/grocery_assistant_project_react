@@ -285,7 +285,7 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
 
     def get_recipes(self, obj):
         '''Метод получения рецептов автора по подписке.'''
-        limit = self.context['request'].query_params.get('limit')
+        limit = self.context['request'].query_params.get('recipes_limit')
         limit = int(limit) if limit and limit.isdigit() else LIMIT_RECIPES
         recipes = obj.author.author_recipes.all()[:limit]
         return ShortListRecipeSerializer(recipes, many=True).data
