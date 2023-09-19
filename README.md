@@ -90,7 +90,7 @@ Github Actions
       - sudo docker compose -f docker-compose.yml down эта команда остановит и удалит все контейнеры и сети.
 
   
-  Для запуска проекта на сервере в контейнерах необходимо:
+  Для запуска проекта в контейнерах на сервере необходимо:
 
     Склонировать репозиторий:
       git clone git@github.com:aten88/kittygram_final.git
@@ -98,25 +98,29 @@ Github Actions
     Раскомментировать содержимое файла main.yml в директории:
       foodgram-project-react/.github/workflows/main.yml
 
-    В своем аккаунте на GitHub в разделе GitHub Actions Secrets передаем в КОНСТАНТЫ необходимые значения для запуска, 
-      в соответствии с примером .env.example::
-
-    - Константы Django:
-      ENV_SECRET: - список констант из файла env.example нужно поместить в secret одним единым списком
+    В своем аккаунте на GitHub в разделе GitHub Actions Secrets передаем в secrets необходимые значения для запуска:
+      ENV_SECRET: DJANGO_KEY = 'django-insecure-yuvxxxxxxxx_xxxxxxx_xxxxxxx'
+                  POSTGRES_USER=someuser@somedomain.com
+                  POSTGRES_PASSWORD=SecretPassword123
+                  POSTGRES_DB=name_db
+                  DB_HOST=name_db
+                  DB_PORT=someportnumber
+                  ALLOWED_HOSTS=xxx.xxx.xx.xx,xxx.x.x.x,localhost,some-domain.net
+                  DEBUG=Boolean_Value
 
     - Переменные для доступа к DockerHub:
-      DOCKER_USERNAME - логин.
-      DOCKER_PASSWORD - пароль.
+      DOCKER_USERNAME = 'Loginusername' - логин.
+      DOCKER_PASSWORD = 'Examplepassword+123' пароль.
 
     - Переменные для подключению к серверу:
-      HOST: - ip адрес сервера.
-      USER: - логин пользователя сервера.
-      SSH_KEY: - закрытый SSH ключ.
-      SSH_PASSPHRASE: - пароль.
+      HOST ='77.777.7777.77' - ip адрес сервера.
+      USER ='some_username' - логин пользователя сервера.
+      SSH_KEY ='SOME??????77777&&&&&XXXXXKEY'- закрытый SSH ключ.
+      SSH_PASSPHRASE ='sOmePassword'- пароль.
 
     - Переменные для отчета в Telegram:
-      TELEGRAM_TO: - ID аккаунта Telegram.
-      TELEGRAM_TOKEN: - Токен телеграмм-бота.
+      TELEGRAM_TO ='1234567890' - ID аккаунта Telegram.
+      TELEGRAM_TOKEN ='SOME??????77777&&&&&XXXXXTOKEN' - Токен телеграмм-бота.
 
     Пушим проект в ветку master, ждем выполнения сценария,
     отчета в телеграмм об успешном выполнении, проверяем доступность проекта.
