@@ -260,6 +260,7 @@ class ShortListRecipeSerializer(serializers.ModelSerializer):
 class SubscriptionSerialiazer(serializers.ModelSerializer):
     '''Сериализатор модели подписок.'''
     email = serializers.EmailField(source='author.email')
+    id = serializers.SerializerMethodField()
     username = serializers.CharField(source='author.username')
     first_name = serializers.CharField(source='author.first_name')
     last_name = serializers.CharField(source='author.last_name')
@@ -293,6 +294,10 @@ class SubscriptionSerialiazer(serializers.ModelSerializer):
     def get_recipes_count(self, obj):
         '''Метод получения количества рецептов автора.'''
         return obj.author.author_recipes.count()
+
+    def get_id(self, obj):
+        '''Метод получения id автора.'''
+        return obj.author.id
 
 
 class SubscriptionCreateSerializer(serializers.ModelSerializer):
