@@ -150,7 +150,8 @@ class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        verbose_name='Ингредиент'
+        verbose_name='Ингредиент',
+        related_name='recipe_ingredients_set'
     )
     amount = models.DecimalField(
         max_digits=LIMIT_DIGITS_AMOUNT_FIELD,
