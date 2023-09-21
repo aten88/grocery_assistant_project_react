@@ -1,11 +1,14 @@
 from django import forms
 from django.contrib import admin
+from django.core.exceptions import ValidationError
+from django.forms.models import BaseInlineFormSet
+
 
 from .models import (
     Favorite, Ingredient, Recipe, RecipeIngredient,
     ShoppingCart, Subscription, Tag
 )
-from recipes.constants import LIMIT_INLINE_VALUE
+from recipes.constants import MIN_INGREDIENTS_VALUE
 
 
 class TagAdminForm(forms.ModelForm):
@@ -64,10 +67,21 @@ class IngredientAdmin(admin.ModelAdmin):
     form = IngredientAdminForm
 
 
+class RecipeIngredientFormSet(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        if sum(
+            MIN_INGREDIENTS_VALUE for form in self.forms
+            if not form.cleaned_data.get('DELETE', False)
+            and any(form.cleaned_data.values())
+        ) < 1:
+            raise ValidationError('Добавьте еще один ингредиент.')
+
+
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
-    extra = LIMIT_INLINE_VALUE
-    min_num = 1
+    extra = 0
+    formset = RecipeIngredientFormSet
 
 
 @admin.register(Recipe)
