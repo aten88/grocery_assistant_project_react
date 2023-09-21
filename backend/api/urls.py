@@ -1,11 +1,14 @@
 from django.urls import include, path
-from djoser.views import TokenCreateView, TokenDestroyView
+
 from rest_framework.routers import DefaultRouter
+from djoser.views import TokenCreateView, TokenDestroyView
+
 
 from .views import (AddFavoriteView, AddToShoppingCart, ChangePasswordViewSet,
                     CurrentUserViewSet, DownloadShoppingCart,
                     IngredientViewSet, RecipeViewSet, TagViewSet,
                     UserDetailView, UserSubscriptionListAPIView, UserViewSet)
+
 
 router = DefaultRouter()
 router.register(r'tags', TagViewSet, basename='tag')

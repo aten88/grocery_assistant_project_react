@@ -1,26 +1,30 @@
 from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from recipes.models import (Favorite, Ingredient, Recipe, ShoppingCart,
-                            Subscription, Tag)
+
 from rest_framework import status, viewsets
-from rest_framework.generics import (ListAPIView, RetrieveAPIView,
-                                     get_object_or_404)
+from rest_framework.generics import (
+    ListAPIView, RetrieveAPIView, get_object_or_404
+)
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import (AllowAny, IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import (
+    AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
+)
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from users.models import CustomUser
 
+from users.models import CustomUser
+from recipes.models import (
+    Favorite, Ingredient, Recipe, ShoppingCart, Subscription, Tag
+)
 from .filters import IngredientFilter, RecipeFilter
 from .pagination import CustomPagination
-from .serializers import (ChangePasswordSerializer, FavoriteSerializer,
-                          IngredientSerializer, RecipeReadSerializer,
-                          RecipeWriteSerializer, ShoppingCartSerializer,
-                          SubscriptionCreateSerializer,
-                          SubscriptionSerialiazer, TagSerializer,
-                          UserSerializer)
+from .serializers import (
+    ChangePasswordSerializer, FavoriteSerializer, IngredientSerializer,
+    RecipeReadSerializer, RecipeWriteSerializer, ShoppingCartSerializer,
+    SubscriptionCreateSerializer, SubscriptionSerialiazer, TagSerializer,
+    UserSerializer
+)
 from .utils import gen_shopping_list
 
 

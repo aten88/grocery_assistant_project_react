@@ -1,14 +1,16 @@
 from django.core.exceptions import ValidationError
-from django.core.validators import (MaxValueValidator, MinValueValidator,
-                                    RegexValidator)
 from django.db import models
 from django.db.models import UniqueConstraint
-from users.models import CustomUser
+from django.core.validators import (
+    MaxValueValidator, MinValueValidator, RegexValidator
+)
 
-from .constants import (LIMIT_COLOR_FIELD, LIMIT_DIGITS_AMOUNT_FIELD,
-                        LIMIT_MODEL_FIELD, LIMIT_NUMBER_WIDTH,
-                        MAX_COOKING_TIME, MAX_LENGTH, MAX_LENGTH_NAME_FIELD,
-                        MIN_COOKING_TIME)
+from users.models import CustomUser
+from .constants import (
+    LIMIT_COLOR_FIELD, LIMIT_DIGITS_AMOUNT_FIELD,
+    LIMIT_MODEL_FIELD, LIMIT_NUMBER_WIDTH, MAX_COOKING_TIME,
+    MAX_LENGTH, MAX_LENGTH_NAME_FIELD, MIN_COOKING_TIME
+)
 from .validators import unique_color_validator
 
 
