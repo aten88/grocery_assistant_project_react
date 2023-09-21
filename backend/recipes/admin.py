@@ -64,6 +64,7 @@ class IngredientAdminForm(forms.ModelForm):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
+    list_filter = ('name',)
     form = IngredientAdminForm
 
 
@@ -88,6 +89,7 @@ class RecipeIngredientInline(admin.TabularInline):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
+    list_filter = ('name', 'author', 'tags')
     inlines = [RecipeIngredientInline]
 
 
