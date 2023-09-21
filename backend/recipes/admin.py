@@ -68,6 +68,7 @@ class IngredientAdmin(admin.ModelAdmin):
 
 
 class RecipeIngredientFormSet(BaseInlineFormSet):
+    '''Форма валидации модели RecipeIngredient.'''
     def clean(self):
         super().clean()
         if sum(
@@ -79,6 +80,7 @@ class RecipeIngredientFormSet(BaseInlineFormSet):
 
 
 class RecipeIngredientInline(admin.TabularInline):
+    '''Inline встроенный в модель Recipe.'''
     model = RecipeIngredient
     extra = 0
     formset = RecipeIngredientFormSet

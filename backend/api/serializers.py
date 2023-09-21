@@ -86,7 +86,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'measurement_unit', 'amount']
 
     def get_amount(self, ingredient):
-        ''''Метод получения количества ингредиента.'''
+        '''Метод получения количества ингредиента.'''
         recipe_id = self.context.get('recipe_id')
         try:
             recipe_ingredient = ingredient.recipe_ingredients_set.get(

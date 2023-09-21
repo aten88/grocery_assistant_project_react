@@ -2,14 +2,15 @@ import csv
 import json
 
 from django.core.management.base import BaseCommand
+
 from recipes.models import Ingredient
 
 
 class Command(BaseCommand):
-    """Команда для загрузки данных из JSON и CSV в БД."""
+    '''Команда для загрузки данных из JSON и CSV в БД.'''
 
     def handle(self, *args, **options):
-        """Метод загрузки данных из JSON и CSV."""
+        '''Метод загрузки данных из JSON и CSV.'''
 
         with open('data/ingredients.json', encoding='utf-8') as json_file:
             data = json.load(json_file)

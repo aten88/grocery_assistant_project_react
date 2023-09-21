@@ -4,10 +4,12 @@ from rest_framework.routers import DefaultRouter
 from djoser.views import TokenCreateView, TokenDestroyView
 
 
-from .views import (AddFavoriteView, AddToShoppingCart, ChangePasswordViewSet,
-                    CurrentUserViewSet, DownloadShoppingCart,
-                    IngredientViewSet, RecipeViewSet, TagViewSet,
-                    UserDetailView, UserSubscriptionListAPIView, UserViewSet)
+from .views import (
+    AddFavoriteView, AddToShoppingCart, ChangePasswordViewSet,
+    CurrentUserViewSet, DownloadShoppingCart,
+    IngredientViewSet, RecipeViewSet, TagViewSet,
+    UserDetailView, UserSubscriptionListAPIView, UserViewSet
+)
 
 
 router = DefaultRouter()
