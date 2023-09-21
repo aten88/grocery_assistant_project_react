@@ -5,6 +5,7 @@ from .models import (
     Favorite, Ingredient, Recipe, RecipeIngredient,
     ShoppingCart, Subscription, Tag
 )
+from recipes.constants import LIMIT_INLINE_VALUE
 
 
 class TagAdminForm(forms.ModelForm):
@@ -65,14 +66,13 @@ class IngredientAdmin(admin.ModelAdmin):
 
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
+    extra = LIMIT_INLINE_VALUE
+    min_num = 1
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     inlines = [RecipeIngredientInline]
-
-    def save_model(self, request, obj, form, change):
-        return obj.save
 
 
 @admin.register(Favorite)
