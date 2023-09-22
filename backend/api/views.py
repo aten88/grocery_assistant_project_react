@@ -8,7 +8,7 @@ from rest_framework.generics import (
 )
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import (
-    AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
+    IsAuthenticated, IsAuthenticatedOrReadOnly
 )
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -33,7 +33,7 @@ class TagViewSet(viewsets.ModelViewSet):
 
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = None
 
 
@@ -42,7 +42,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = None
     filter_backends = (DjangoFilterBackend,)
     filterset_class = IngredientFilter
@@ -163,7 +163,7 @@ class UserViewSet(viewsets.ModelViewSet):
     '''Вьюсет модели User.'''
     queryset = CustomUser.objects.order_by('-date_joined').all()
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = PageNumberPagination
 
     def create(self, request):
@@ -181,7 +181,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class UserDetailView(RetrieveAPIView):
     '''Вьюсет для User по id.'''
 
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'id'

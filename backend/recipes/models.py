@@ -130,6 +130,10 @@ class Recipe(models.Model):
         verbose_name='Дата публикации.'
     )
 
+    def total_favorites(self):
+        '''Метод для получения количества добавлений рецепта в избранное.'''
+        return self.favorites.count()
+
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
