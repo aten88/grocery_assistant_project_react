@@ -1,4 +1,3 @@
-[![Grocery assistant workflow](https://github.com/aten88/grocery_assistant_project_react/actions/workflows/main.yml/badge.svg)](https://github.com/aten88/grocery_assistant_project_react/actions/workflows/main.yml)
 # Grocery assistant
 ## Описание проекта:
 ### Продуктовый помощник Grocery assistant который позволяет:
