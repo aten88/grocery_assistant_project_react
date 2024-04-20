@@ -1,4 +1,4 @@
-[![Foodgram Project React workflow](https://github.com/aten88/foodgram-project-react/actions/workflows/main.yml/badge.svg)](https://github.com/aten88/foodgram-project-react/actions/workflows/main.yml)
+[![Grocery assistant workflow](https://github.com/aten88/foodgram-project-react/actions/workflows/main.yml/badge.svg)](https://github.com/aten88/foodgram-project-react/actions/workflows/main.yml)
 # Grocery assistant
 ## Описание проекта:
 ### Продуктовый помощник Grocery assistant который позволяет:
